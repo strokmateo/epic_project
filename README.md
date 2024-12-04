@@ -1,5 +1,4 @@
 Epic project To-do list
-Sure! Here’s a simplified to-do list format for setting up Next.js + .NET for your game project:
 
 1. Project Setup(Create a new Next.js app:Create a new ASP.NET Core Web API projectConfigure the project to connect with your frontend (set up API routes, proxy, or reverse proxy if needed).
 2. Authetication system(login,registter,logout,delete account, update account infromatiion)
