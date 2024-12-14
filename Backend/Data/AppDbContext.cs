@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Backend.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Data
 {
