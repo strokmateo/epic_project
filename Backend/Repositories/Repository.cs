@@ -31,36 +31,42 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
         await _context.SaveChangesAsync();
     }
 
-    public async Task<IEnumerable<TEntity>> Find(Expression<Func<TEntity, bool>> predicate)
+    public async Task<IEnumerable<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate)
     {
         return await _dbSet.Where(predicate).ToListAsync();
     }
 
-    public async Task<IEnumerable<TEntity>> GetAll()
+    public async Task<IEnumerable<TEntity?>> GetAllAsync()
     {
         return await _dbSet.ToListAsync();
     }
 
-    public async Task<TEntity> GetById(int id)
+    public async Task<TEntity?> GetByIdAsync(int id)
     {
-        var entity = await _dbSet.FindAsync(id);
-        if(entity != null)
-            return entity;
-        
+        return await _dbSet.FindAsync(id);
     }
 
-    public Task<TEntity> GetById(Guid id)
+    public async Task<TEntity?> GetByIdAsync(Guid id)
     {
-        throw new NotImplementedException();
+        return await _dbSet.FindAsync(id);
+    }
+    public async Task RemoveAsync(TEntity entity)
+    {
+        var entityToRemove = await _dbSet.FindAsync(entity);
+        if(entityToRemove != null)
+        {
+            _dbSet.Remove(entityToRemove);
+            await _context.SaveChangesAsync();
+        }
     }
 
-    public Task Remove(TEntity entity)
+    public async Task RemoveRangeAsync(IEnumerable<TEntity> entities)
     {
-        throw new NotImplementedException();
-    }
-
-    public Task RemoveRange(IEnumerable<TEntity> entities)
-    {
-        throw new NotImplementedException();
+        var entitiesToRemove = await _dbSet.Where(e => entities.Contains(e)).ToListAsync();
+        if (entitiesToRemove != null)
+        {
+            _dbSet.RemoveRange(entitiesToRemove);
+            await _context.SaveChangesAsync();
+        }
     }
 }
