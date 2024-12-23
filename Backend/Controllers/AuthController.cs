@@ -7,5 +7,9 @@ namespace Backend.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
+        public Task<IActionResult> LogIn()
+        {
+
+        }
     }
 }
