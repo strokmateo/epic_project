@@ -1,22 +1,10 @@
-﻿namespace Backend.Entities;
+﻿using Microsoft.AspNetCore.Identity;
 
-public class User
+namespace Backend.Entities;
+
+public class User : IdentityUser<Guid>
 {
-    public Guid Id { get; set; }
-    public string UserName { get; set; }
-    public string PasswordHash { get; set; }
-    public string Email { get; set; }
-    public bool EmailVerified { get; set; }
-
-    public string IsEmailVerified()
-    {
-        if (EmailVerified)
-        {
-            return "true";
-        }
-        else
-        {
-            return "false";
-        }
-    }
+    // Todo -> .ignore all unused
+    // props from this class in
+    // OnModelCreating().
 }
