@@ -19,13 +19,13 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
         _context = context;
         _dbSet = context.Set<TEntity>();
     }
-    public async Task Add(TEntity entity)
+    public async Task AddAsync(TEntity entity)
     {
         await _dbSet.AddAsync(entity);
         await _context.SaveChangesAsync();
     }
 
-    public async Task AddRange(IEnumerable<TEntity> entities)
+    public async Task AddRangeAsync(IEnumerable<TEntity> entities)
     {
         await _dbSet.AddRangeAsync(entities);
         await _context.SaveChangesAsync();
