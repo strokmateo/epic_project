@@ -22,7 +22,7 @@ namespace Backend.Services
                     [
                         new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
                         new Claim(JwtRegisteredClaimNames.Email, user.Email),
-                        new Claim("email_verified", user.IsEmailVerified())
+                        new Claim("email_confirmed", user.EmailConfirmed.ToString().ToLower())
                     ]),
                 Expires = DateTime.UtcNow.AddMinutes(configuration.GetValue<int>("Jwt:ExpirationInMinutes")),
                 SigningCredentials = credentials,
