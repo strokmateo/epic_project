@@ -6,3 +6,5 @@
 Backend.csproj.user
 .vs/
 ../.vs/	
+**/bin
+**/Migrations
