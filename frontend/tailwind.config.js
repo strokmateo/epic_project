@@ -4,9 +4,23 @@ export default {
     content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
     theme: {
         extend: {
+            animation: {
+                "fade-in": "fadeIn 1s ease-in forwards",
+            },
+            keyframes: {
+                fadeIn: {
+                    "0%": { opacity: "0" },
+                    "100%": { opacity: "1" },
+                },
+            },
+            fontFamily: {
+                pixel: ["Pixelify Sans", "serif"],
+            },
             backgroundImage: {
                 "auth-background":
-                    "url('/first_town_street_view_pixelated.png')",
+                    "url('src/assets/images/first_town_street_view_pixelated.png')",
+                "auth-background-effects":
+                    "url('src/assets/images/first_town_street_view_pixelated_effects.png')",
             },
             borderRadius: {
                 lg: "var(--radius)",
