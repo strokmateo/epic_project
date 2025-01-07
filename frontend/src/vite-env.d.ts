@@ -2,7 +2,7 @@
 
 interface ImportMetaEnv {
     readonly VITE_LOCAL_URL: string;
-    readonly VITE_LOCAL_URL_PORT: number;
+    readonly VITE_LOCAL_PORT: number;
 }
 
 interface ImportMeta {
