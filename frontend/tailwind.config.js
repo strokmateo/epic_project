@@ -6,11 +6,26 @@ export default {
         extend: {
             animation: {
                 "fade-in": "fadeIn 1s ease-in forwards",
+                "slide-up": "slide-up 0.5s ease-out",
+                "slide-up-character": "slide-up 0.75s ease-out",
+                fade: "fadeColors 2s infinite",
             },
             keyframes: {
+                fadeColors: {
+                    "0%, 100%": { color: "black" },
+                    "50%": { color: "white" },
+                },
                 fadeIn: {
                     "0%": { opacity: "0" },
                     "100%": { opacity: "1" },
+                },
+                "slide-up": {
+                    "0%": { transform: "translateY(100%)" },
+                    "100%": { transform: "translateY(0)" },
+                },
+                "slide-up-character": {
+                    "0%": { transform: "translateY(100%)" },
+                    "100%": { transform: "translateY(0)" },
                 },
             },
             fontFamily: {
