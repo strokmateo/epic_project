@@ -7,6 +7,7 @@ export default {
             animation: {
                 "fade-in": "fadeIn 1s ease-in forwards",
                 "slide-up": "slide-up 0.5s ease-out",
+                slideOut: "slideOut 0.5s ease-out",
                 "slide-up-character": "slide-up 0.75s ease-out",
                 fade: "fadeColors 2s infinite",
             },
@@ -22,6 +23,10 @@ export default {
                 "slide-up": {
                     "0%": { transform: "translateY(100%)" },
                     "100%": { transform: "translateY(0)" },
+                },
+                slideOut: {
+                    "0%": { transform: "translateX(0)" },
+                    "100%": { transform: "translateY(100%)" },
                 },
                 "slide-up-character": {
                     "0%": { transform: "translateY(100%)" },
