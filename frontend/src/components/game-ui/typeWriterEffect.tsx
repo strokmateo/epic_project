@@ -33,7 +33,7 @@ export default function TypewriterEffect({
         <p className={className}>
             {displayedText}
             {displayClickNext && (
-                <span className="animate-fade"> Click to Continue</span>
+                <p className="animate-fade"> Click to Continue</p>
             )}
         </p>
     );

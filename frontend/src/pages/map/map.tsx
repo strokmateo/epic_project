@@ -40,7 +40,7 @@ const Map: React.FC = () => {
         height: "100%",
         left: "0px",
         top: "0px",
-        backgroundImage: "url(/fighting_town.jpeg)",
+        backgroundImage: "url(src/assets/images/fighting_town.jpeg)",
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",

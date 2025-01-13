@@ -6,10 +6,10 @@ export default function CharacterDialog({
     characterSrc,
     className,
     text = null,
-    dialogVisibility,
+    dialogVisibility = true,
 }: {
     characterSrc: string;
-    className: string;
+    className?: string;
     text?: string | null;
     dialogVisibility?: boolean;
 }) {
