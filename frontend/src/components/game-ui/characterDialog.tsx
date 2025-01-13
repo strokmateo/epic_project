@@ -5,18 +5,26 @@ import Dialog from "./dialog";
 export default function CharacterDialog({
     characterSrc,
     className,
-    text
+    text = null,
+    dialogVisibility,
 }: {
     characterSrc: string;
     className: string;
-    text: string
+    text?: string | null;
+    dialogVisibility?: boolean;
 }) {
     return (
         <div className={cn("relative", className)}>
             {/* Dialog */}
-            <div className="relative z-10">
-                <Dialog text={text} />
-            </div>
+            {text && (
+                <div
+                    className={`${
+                        !dialogVisibility && "animate-slideOut"
+                    } relative z-10`}
+                >
+                    <Dialog text={text} />
+                </div>
+            )}
 
             {/* Character */}
             <div className="absolute bottom-0 right-0 w-1/2 flex justify-center z-20 translate-y-28">
