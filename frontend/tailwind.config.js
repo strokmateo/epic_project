@@ -6,15 +6,21 @@ export default {
         extend: {
             animation: {
                 "fade-in": "fadeIn 1s ease-in forwards",
+                "fade-in-fast": "fadeIn 0.2s ease-in forwards",
                 "slide-up": "slide-up 0.5s ease-out",
                 slideOut: "slideOut 0.5s ease-out",
                 "slide-up-character": "slide-up 0.75s ease-out",
                 fade: "fadeColors 2s infinite",
+                "fade-dialog": "fadeColorsLess 2s infinite",
             },
             keyframes: {
                 fadeColors: {
                     "0%, 100%": { color: "black" },
                     "50%": { color: "white" },
+                },
+                fadeColorsLess: {
+                    "0%, 100%": { color: "black" },
+                    "50%": { color: "maroon" },
                 },
                 fadeIn: {
                     "0%": { opacity: "0" },

@@ -5,21 +5,33 @@ const Map: React.FC = () => {
     const navigate = useNavigate();
 
     const houses = [
-        { id: 1, name: "Tavern", displayName: "Tavern", x: "33%", y: "25%" },
+        {
+            id: 1,
+            name: "Tavern",
+            displayName: "Tavern",
+            x: "34%",
+            y: "27%",
+        },
         {
             id: 2,
             name: "Town Hall",
             displayName: "Town Hall",
-            x: "47%",
+            x: "49%",
             y: "38%",
         },
-        { id: 3, name: "Alley", displayName: "???", x: "70%", y: "50%" },
+        {
+            id: 3,
+            name: "Alley",
+            displayName: "???",
+            x: "72%",
+            y: "50%",
+        },
         {
             id: 4,
             name: "Wizard Hut",
             displayName: "Wizard Hut",
-            x: "59%",
-            y: "75%",
+            x: "61%",
+            y: "76%",
         },
     ];
 
@@ -52,7 +64,9 @@ const Map: React.FC = () => {
         width: "30px",
         height: "30px",
         backgroundColor: "black",
+        opacity: 0.9,
         borderRadius: "50%",
+        border: "2px solid white",
         cursor: "pointer",
     };
 
@@ -61,6 +75,7 @@ const Map: React.FC = () => {
         position: "absolute",
         backgroundColor: "black",
         color: "white",
+        // opacity: 0.4,
         padding: "10px",
         border: "1px solid white",
         borderRadius: "5px",
@@ -79,6 +94,10 @@ const Map: React.FC = () => {
         >
             {houses.map((house) => (
                 <div
+                    //slika nije kako treba jer nemam photoshop na laptopu - photopea šteka jako (promijeniti)
+                    //div pretvoriti u img kad se napravi ikonica kako spada, za sad neka je točkica
+                    //src="src/assets/images/houses_icon_bg.png"
+
                     key={house.id}
                     className="absolute w-4 h-4 bg-red-500 rounded-full transform -translate-x-1/2 -translate-y-1/2 cursor-pointer
                     	transition-transform duration-300 hover:scale-125 hover:bg-yellow-500"
@@ -124,6 +143,7 @@ const Map: React.FC = () => {
             ))}
             {hoveredHouse && (
                 <div
+                    className="animate-fade-in-fast"
                     style={{
                         ...infoHoverStyle,
                         left: hoveredHouse.x,

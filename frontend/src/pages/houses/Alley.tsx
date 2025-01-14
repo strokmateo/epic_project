@@ -26,7 +26,7 @@ const Alley: React.FC = () => {
             <CharacterDialog
                 characterSrc="src/assets/images/shadowy-figure-1.png"
                 text={
-                    "Step away, stranger, for these shadows hold no mercy. Turn back now, or invite a fate you cannot escape!"
+                    "Step away, stranger, for these shadows hold no mercy. Turn back now!"
                 }
             />
         </div>

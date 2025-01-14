@@ -12,7 +12,7 @@ export default function Dialog({
         // currently only works for npc -> player output, todo is to add func for player -> npc input
         <div
             className={cn(
-                "bg-slate-300  w-screen h-[150px] animate-slide-up flex font-pixel text-[30px]",
+                "bg-slate-200  w-screen h-[150px] animate-slide-up flex font-pixel text-[30px]",
                 className
             )}
         >
