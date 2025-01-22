@@ -71,6 +71,7 @@ builder.Services.AddRouting(options => options.LowercaseUrls = true);
 builder.Services.AddScoped<ITokenProviderService, TokenProviderService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<ICodeExecutionService, CodeExecutionService>();
 
 // Basic identity framework options.
 builder.Services.AddIdentityCore<User>(options =>
