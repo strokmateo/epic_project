@@ -14,7 +14,7 @@ public class CodeExecutionService : ICodeExecutionService
         await File.WriteAllTextAsync(tempFilePath, submission.Code);
 
         try
-        {   //try executeing code with Node.js
+        {   //try executeing code with Node.js runtime engine
             var process = new Process
             {
                 StartInfo = new ProcessStartInfo
