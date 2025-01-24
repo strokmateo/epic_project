@@ -136,6 +136,8 @@ var app = builder.Build();
 
 app.UseRouting();
 
+app.UseCors("AllowReactApp");
+
 app.UseAuthentication();
 
 app.UseAuthorization();
