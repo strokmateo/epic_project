@@ -41,6 +41,7 @@ export default {
             },
             fontFamily: {
                 pixel: ["Pixelify Sans", "serif"],
+                auth: ["Montserrat", "serif"],
             },
             backgroundImage: {
                 "auth-background":

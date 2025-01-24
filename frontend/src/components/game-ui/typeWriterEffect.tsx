@@ -30,11 +30,11 @@ export default function TypewriterEffect({
     }, [text, speed]);
 
     return (
-        <p className={className}>
+        <div className={className}>
             {displayedText}
             {displayClickNext && (
                 <p className="animate-fade-dialog"> Click to Continue</p>
             )}
-        </p>
+        </div>
     );
 }
