@@ -7,6 +7,7 @@ import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import Circle from "@/assets/images/circle.svg";
 import Lock from "@/assets/images/lock.svg";
+import axios from "axios";
 
 const loginSchema = z.object({
     emailUsername: z
@@ -30,8 +31,23 @@ export default function LoginFormBox() {
         },
     });
 
-    function onSubmit(values: Login) {
-        console.log(values);
+    async function onSubmit(values: Login) {
+        try {
+            const response = await axios.post(
+                "https://localhost:7092/api/auth/login",
+                values
+            );
+            console.log("Response:", response.data); // Log the success response
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                console.error(
+                    "Axios error:",
+                    error.response?.data || error.message
+                );
+            } else {
+                console.error("Unexpected error:", error);
+            }
+        }
     }
 
     return (
@@ -41,11 +57,11 @@ export default function LoginFormBox() {
                     onSubmit={form.handleSubmit(onSubmit)}
                     className="flex flex-col w-full h-full justify-between"
                 >
-                    <section className="flex flex-col gap-[40px] relative">
+                    <section className="flex flex-col gap-[20px] relative">
                         <FormField
                             control={form.control}
                             name="emailUsername"
-                            render={({ field }) => (
+                            render={({ field, fieldState }) => (
                                 <FormItem>
                                     <img
                                         src={Circle}
@@ -58,15 +74,24 @@ export default function LoginFormBox() {
                                             {...field}
                                             className="h-[99px] rounded-none text-center !text-[36px] font-auth bg-transparent text-white border-gray-400"
                                             placeholder="USERNAME"
-                                        ></Input>
+                                        />
                                     </FormControl>
+                                    {/* Reserve space for error */}
+                                    <div className="h-[20px] mt-2">
+                                        {fieldState.error && (
+                                            <p className="text-red-500 text-sm">
+                                                {fieldState.error.message}
+                                            </p>
+                                        )}
+                                    </div>
                                 </FormItem>
                             )}
                         />
+
                         <FormField
                             control={form.control}
                             name="password"
-                            render={({ field }) => (
+                            render={({ field, fieldState }) => (
                                 <FormItem>
                                     <img
                                         src={Lock}
@@ -80,8 +105,16 @@ export default function LoginFormBox() {
                                             type="password"
                                             className="h-[99px] rounded-none text-center !text-[36px] font-auth bg-transparent text-white border-gray-400"
                                             placeholder="PASSWORD"
-                                        ></Input>
+                                        />
                                     </FormControl>
+                                    {/* Reserve space for error */}
+                                    <div className="h-[20px] mt-2">
+                                        {fieldState.error && (
+                                            <p className="text-red-500 text-sm">
+                                                {fieldState.error.message}
+                                            </p>
+                                        )}
+                                    </div>
                                 </FormItem>
                             )}
                         />
