@@ -13,7 +13,7 @@ const loginSchema = z.object({
     emailUsername: z
         .string()
         .min(5, { message: "Username / Email too short." })
-        .max(16, { message: "Username / Email too long." }),
+        .max(64, { message: "Username / Email too long." }),
     password: z
         .string()
         .min(8, { message: "Password too short." })
@@ -44,11 +44,6 @@ export default function LoginFormBox() {
                 const errorMessage =
                     error.response.data || "An error occurred";
 
-                // Set error for both fields
-                form.setError("emailUsername", {
-                    type: "server",
-                    message: errorMessage,
-                });
                 form.setError("password", {
                     type: "server",
                     message: errorMessage,

@@ -1,3 +1,6 @@
+import AuthPipeline from "../../components/AuthPipeline";
+import RegisterFormBox from "../../components/RegisterFormBox";
+
 export default function RegisterPage() {
-    return <div>Register Page</div>;
+    return <AuthPipeline authFormComponent={<RegisterFormBox />} />;
 }
