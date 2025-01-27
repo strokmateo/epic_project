@@ -37,13 +37,22 @@ export default function LoginFormBox() {
                 "https://localhost:7092/api/auth/login",
                 values
             );
-            console.log("Response:", response.data); // Log the success response
+            console.log("Response:", response); // Log the success response
         } catch (error) {
-            if (axios.isAxiosError(error)) {
-                console.error(
-                    "Axios error:",
-                    error.response?.data || error.message
-                );
+            if (axios.isAxiosError(error) && error.response?.data) {
+                // Handle server errors
+                const errorMessage =
+                    error.response.data || "An error occurred";
+
+                // Set error for both fields
+                form.setError("emailUsername", {
+                    type: "server",
+                    message: errorMessage,
+                });
+                form.setError("password", {
+                    type: "server",
+                    message: errorMessage,
+                });
             } else {
                 console.error("Unexpected error:", error);
             }
@@ -61,7 +70,7 @@ export default function LoginFormBox() {
                         <FormField
                             control={form.control}
                             name="emailUsername"
-                            render={({ field, fieldState }) => (
+                            render={({ formState }) => (
                                 <FormItem>
                                     <img
                                         src={Circle}
@@ -71,16 +80,22 @@ export default function LoginFormBox() {
                                     />
                                     <FormControl>
                                         <Input
-                                            {...field}
+                                            {...form.register("emailUsername", {
+                                                required:
+                                                    "Email / Username required",
+                                            })}
                                             className="h-[99px] rounded-none text-center !text-[36px] font-auth bg-transparent text-white border-gray-400"
                                             placeholder="USERNAME"
                                         />
                                     </FormControl>
                                     {/* Reserve space for error */}
                                     <div className="h-[20px] mt-2">
-                                        {fieldState.error && (
+                                        {formState.errors.emailUsername && (
                                             <p className="text-red-500 text-sm">
-                                                {fieldState.error.message}
+                                                {
+                                                    formState.errors
+                                                        .emailUsername.message
+                                                }
                                             </p>
                                         )}
                                     </div>
@@ -91,17 +106,19 @@ export default function LoginFormBox() {
                         <FormField
                             control={form.control}
                             name="password"
-                            render={({ field, fieldState }) => (
+                            render={({ formState }) => (
                                 <FormItem>
                                     <img
                                         src={Lock}
                                         alt="lock"
-                                        className="absolute top-[185px] left-[25px]"
+                                        className="absolute top-[192px] left-[25px]"
                                         draggable="false"
                                     />
                                     <FormControl>
                                         <Input
-                                            {...field}
+                                            {...form.register("password", {
+                                                required: "Password required",
+                                            })}
                                             type="password"
                                             className="h-[99px] rounded-none text-center !text-[36px] font-auth bg-transparent text-white border-gray-400"
                                             placeholder="PASSWORD"
@@ -109,9 +126,12 @@ export default function LoginFormBox() {
                                     </FormControl>
                                     {/* Reserve space for error */}
                                     <div className="h-[20px] mt-2">
-                                        {fieldState.error && (
+                                        {formState.errors.password && (
                                             <p className="text-red-500 text-sm">
-                                                {fieldState.error.message}
+                                                {
+                                                    formState.errors.password
+                                                        .message
+                                                }
                                             </p>
                                         )}
                                     </div>
