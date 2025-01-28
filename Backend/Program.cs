@@ -104,6 +104,16 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<UserManager<User>>();
 builder.Services.AddScoped<SignInManager<User>>();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowReactApp", builder =>
+    {
+        builder.WithOrigins("http://localhost:3000")
+               .AllowAnyHeader()
+               .AllowAnyMethod();
+    });
+});
+
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -130,6 +140,8 @@ builder.Services.AddAuthorization();
 var app = builder.Build();
 
 app.UseRouting();
+
+app.UseCors("AllowReactApp");
 
 app.UseAuthentication();
 
