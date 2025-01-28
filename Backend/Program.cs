@@ -1,6 +1,8 @@
 using System.Text;
 using Backend.Data;
 using Backend.Entities;
+using Backend.Repositories;
+using Backend.Repositories.Interfaces;
 using Backend.Services;
 using Backend.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -72,6 +74,9 @@ builder.Services.AddScoped<ITokenProviderService, TokenProviderService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ICodeExecutionService, CodeExecutionService>();
+builder.Services.AddScoped<ICodeExecutionService, CodeExecutionService>();
+builder.Services.AddScoped<ICodingProblemRepository, CodingProblemRepository>();
+builder.Services.AddScoped<IProblemEvaluationService, ProblemEvaluationService>();
 
 // Basic identity framework options.
 builder.Services.AddIdentityCore<User>(options =>
