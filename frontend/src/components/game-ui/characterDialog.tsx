@@ -7,11 +7,13 @@ export default function CharacterDialog({
     className,
     text = null,
     dialogVisibility = true,
-}: {
+}: //scale = 0.75,
+{
     characterSrc: string;
     className?: string;
     text?: string | null;
     dialogVisibility?: boolean;
+    //scale?: number; ako bude trebalo ikad
 }) {
     return (
         <div className={cn("relative", className)}>

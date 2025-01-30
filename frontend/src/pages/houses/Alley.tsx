@@ -22,7 +22,6 @@ const Alley: React.FC = () => {
             className="w-screen h-screen bg-cover flex flex-col justify-end relative overflow-hidden"
             onClick={() => navigate("/map")}
         >
-            {/* treba promijeniti sprite (trenutno je vojnik umjesto shadowy figure (kojeg jos nemamo)) */}
             <CharacterDialog
                 characterSrc="src/assets/images/shadowy-figure-1.png"
                 text={
