@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import Editor from "@monaco-editor/react";
-import CharacterDialog from "../../components/game-ui/characterDialog";
 
 interface TestCase {
     id: number;
@@ -119,7 +118,7 @@ export default function CodingPage() {
                 />
             </div>
 
-            {/* Top-Right: Empty slot for future use */}
+            {/* Top-Right: Monster */}
             <div
                 style={{
                     backgroundImage:
@@ -129,15 +128,21 @@ export default function CodingPage() {
                     backgroundRepeat: "no-repeat",
                     border: "1px solid #ccc",
                 }}
-                className="bg-black flex justify-center items-start h-full p-10 overflow-hidden"
+                className="bg-black flex justify-center items-start h-full p-10 overflow-hidden relative"
             >
                 <img
                     src="src/assets/images/final-boss.png"
                     className="scale-150 translate-x-40 drop-shadow-[5px_0px_20px_rgba(0,0,0,1)]"
                 />
+                <div className="absolute bottom-0 bg-red-500 justify-left items-left">
+                    <img
+                        className="w-20 h-20 mb-10 ml-5"
+                        src="src/assets/images/heart-full.png"
+                    />
+                </div>
             </div>
 
-            {/* Bottom-Left: Problem & Test Cases */}
+            {/* Bottom-Left: Coding Problem */}
             <div
                 style={{
                     gridColumn: "1 / 2",
@@ -163,11 +168,81 @@ export default function CodingPage() {
                         {problemData.description}
                     </p>
                 </div>
+            </div>
+            {/* Bottom-Right: Problem & Test Cases */}
+            <div
+                style={{
+                    border: "1px solid #ccc",
+                    borderRadius: "4px",
+                    whiteSpace: "pre-wrap",
+                    lineHeight: "1.5",
+                    overflowY: "auto",
+                }}
+            >
+                <button
+                    onClick={runCode}
+                    style={{
+                        padding: "12px 24px",
+                        height: "50px",
+                        backgroundColor: "#4CAF50",
+                        color: "white",
+                        border: "none",
+                        borderRadius: "4px",
+                        cursor: "pointer",
+                        fontSize: "16px",
+                        transition: "background-color 0.3s ease",
+                        display: "inline",
+                        marginBottom: "20px",
+                        marginTop: "10px",
+                        marginLeft: "10px",
+                    }}
+                    onMouseOver={(e) =>
+                        (e.currentTarget.style.backgroundColor = "#45a049")
+                    }
+                    onMouseOut={(e) =>
+                        (e.currentTarget.style.backgroundColor = "#4CAF50")
+                    }
+                >
+                    Run Tests
+                </button>
 
-                <h3 style={{ marginBottom: "16px" }}>Test Cases</h3>
+                {output && (
+                    <div
+                        style={{
+                            display: "inline-block",
+                            marginBottom: "20px",
+                            marginTop: "10px",
+                            padding: "12px 24px",
+                            marginLeft: "410px",
+                            borderRadius: "4px",
+                            fontSize: "16px",
+                            height: "50px",
+                            backgroundColor: output.includes("passed")
+                                ? "#e8f5e9"
+                                : "rgba(244, 67, 54, 0.1)",
+                            color: output.includes("passed")
+                                ? "#2e7d32"
+                                : "#c62828",
+                            fontWeight: "bold",
+                        }}
+                    >
+                        {output}
+                    </div>
+                )}
+                <h3
+                    style={{
+                        marginBottom: "20px",
+                        color: "white",
+                        padding: "16px",
+                        borderRadius: "4px",
+                        backgroundColor: "rgba(100, 100, 100, 0.3)",
+                    }}
+                >
+                    Test Cases
+                </h3>
                 <div
                     style={{
-                        backgroundColor: "rgba(50, 50, 50, 0.75)",
+                        //backgroundColor: "rgba(50, 50, 50, 0.75)",
                         display: "grid",
                         gridTemplateColumns: "1fr 1fr",
                         gap: "16px",
@@ -186,8 +261,8 @@ export default function CodingPage() {
                                     tc.result === undefined
                                         ? "rgba(50, 50, 50, 0.5)"
                                         : tc.result
-                                        ? "rgba(30, 130, 76, 0.7)"
-                                        : "rgba(100, 0, 0, 0.7)",
+                                        ? "rgba(30, 130, 76, 0.3)"
+                                        : "rgba(120, 0, 0, 0.3)",
                                 transition: "background-color 0.3s ease",
                             }}
                         >
@@ -253,49 +328,8 @@ export default function CodingPage() {
                         justifyContent: "space-between",
                         alignItems: "center",
                     }}
-                >
-                    <button
-                        onClick={runCode}
-                        style={{
-                            padding: "12px 24px",
-                            backgroundColor: "#4CAF50",
-                            color: "white",
-                            border: "none",
-                            borderRadius: "4px",
-                            cursor: "pointer",
-                            fontSize: "16px",
-                            transition: "background-color 0.3s ease",
-                        }}
-                        onMouseOver={(e) =>
-                            (e.currentTarget.style.backgroundColor = "#45a049")
-                        }
-                        onMouseOut={(e) =>
-                            (e.currentTarget.style.backgroundColor = "#4CAF50")
-                        }
-                    >
-                        Run Tests
-                    </button>
-
-                    {output && (
-                        <div
-                            style={{
-                                padding: "12px 16px",
-                                borderRadius: "4px",
-                                backgroundColor: output.includes("passed")
-                                    ? "#e8f5e9"
-                                    : "#ffebee",
-                                color: output.includes("passed")
-                                    ? "#2e7d32"
-                                    : "#c62828",
-                                fontWeight: "bold",
-                            }}
-                        >
-                            {output}
-                        </div>
-                    )}
-                </div>
+                ></div>
             </div>
-            <div style={{ backgroundColor: "black" }}>TEST</div>
         </div>
     );
 }
