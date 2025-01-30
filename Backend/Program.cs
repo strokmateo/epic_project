@@ -35,9 +35,25 @@ if(string.IsNullOrEmpty(audience))
     throw new ArgumentNullException("Audience cannot be null.");
 }
 
+// Database connection string setup
+
+var dbPassword = builder.Configuration["DbPassword"];
+if (string.IsNullOrEmpty(dbPassword))
+{
+    throw new ArgumentNullException("Database password cannot be null. Make sure it is stored in user secrets.");
+}
+
+var connectionStringTemplate = builder.Configuration.GetConnectionString("DefaultConnection");
+if(connectionStringTemplate == null)
+{
+    throw new ArgumentNullException("Database connection string (no password) is invalid");
+}
+
+var finalConnectionString = connectionStringTemplate.Replace("{DbPassword}", dbPassword);
+
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+    options.UseSqlServer(finalConnectionString);
 });
 
 builder.Services.AddSwaggerGen(option =>
