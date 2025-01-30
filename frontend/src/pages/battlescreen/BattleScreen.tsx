@@ -17,7 +17,7 @@ interface ProblemData {
 
 export default function CodingPage() {
     const [code, setCode] = useState(
-        `/***\n| * @param {number[][]} matrix\n| * @param {number} n\n| * @return {number}\n */\nvar dragonLair = function(matrix, n) {\n    // Your code here\n};`
+        `/***\n| * @param {number[][]} matrix\n| * @param {nu mber} n\n| * @return {number}\n */\nvar dragonLair = function(matrix, n) {\n    // Your code here\n};`
     );
     const [problemData, setProblemData] = useState<ProblemData>({
         title: "Dragon's Lair: Square Grid Treasure Hunt",
@@ -51,6 +51,15 @@ export default function CodingPage() {
                         [11, 12, 13],
                     ]),
                     expected: "27",
+                },
+                {
+                    id: 3,
+                    input: JSON.stringify([
+                        [5, 6, 7],
+                        [8, 9, 10],
+                        [11, 12, 13],
+                    ]),
+                    expected: "50",
                 },
             ],
         };
@@ -88,6 +97,8 @@ export default function CodingPage() {
             setOutput("Error in code execution");
         }
     };
+
+    const heartNumber = 5;
 
     return (
         <div
@@ -134,9 +145,64 @@ export default function CodingPage() {
                     src="src/assets/images/final-boss.png"
                     className="scale-150 translate-x-40 drop-shadow-[5px_0px_20px_rgba(0,0,0,1)]"
                 />
-                <div className="absolute bottom-0 bg-red-500 justify-left items-left">
+
+                <div
+                    className="absolute bottom-0 flex flex-row justify-between items-center m-5 w-90"
+                    style={{
+                        backgroundColor: "rgba(0, 0, 0, 0.3)",
+                        padding: "10px",
+                        margin: "20px",
+                        borderRadius: "4px",
+                    }}
+                >
                     <img
-                        className="w-20 h-20 mb-10 ml-5"
+                        style={{
+                            width: `${100 / heartNumber}%`,
+                            height: "auto",
+                            maxWidth: "100px",
+                            paddingRight: "5px",
+                            paddingLeft: "5px",
+                        }}
+                        src="src/assets/images/heart-full.png"
+                    />
+                    <img
+                        style={{
+                            width: `${100 / heartNumber}%`,
+                            height: "auto",
+                            maxWidth: "100px",
+                            paddingRight: "5px",
+                            paddingLeft: "5px",
+                        }}
+                        src="src/assets/images/heart-full.png"
+                    />
+                    <img
+                        style={{
+                            width: `${100 / heartNumber}%`,
+                            height: "auto",
+                            maxWidth: "100px",
+                            paddingRight: "5px",
+                            paddingLeft: "5px",
+                        }}
+                        src="src/assets/images/heart-full.png"
+                    />
+                    <img
+                        style={{
+                            width: `${100 / heartNumber}%`,
+                            height: "auto",
+                            maxWidth: "100px",
+                            paddingRight: "5px",
+                            paddingLeft: "5px",
+                        }}
+                        src="src/assets/images/heart-full.png"
+                    />
+                    <img
+                        style={{
+                            width: `${100 / heartNumber}%`,
+                            height: "auto",
+                            maxWidth: "100px",
+                            paddingRight: "5px",
+                            paddingLeft: "5px",
+                        }}
                         src="src/assets/images/heart-full.png"
                     />
                 </div>
@@ -179,58 +245,64 @@ export default function CodingPage() {
                     overflowY: "auto",
                 }}
             >
-                <button
-                    onClick={runCode}
-                    style={{
-                        padding: "12px 24px",
-                        height: "50px",
-                        backgroundColor: "#4CAF50",
-                        color: "white",
-                        border: "none",
-                        borderRadius: "4px",
-                        cursor: "pointer",
-                        fontSize: "16px",
-                        transition: "background-color 0.3s ease",
-                        display: "inline",
-                        marginBottom: "20px",
-                        marginTop: "10px",
-                        marginLeft: "10px",
-                    }}
-                    onMouseOver={(e) =>
-                        (e.currentTarget.style.backgroundColor = "#45a049")
-                    }
-                    onMouseOut={(e) =>
-                        (e.currentTarget.style.backgroundColor = "#4CAF50")
-                    }
+                <div
+                    className="flex justify-between w-full"
+                    style={{ borderBottom: "1px solid #ccc" }}
                 >
-                    Run Tests
-                </button>
-
-                {output && (
-                    <div
+                    <button
+                        onClick={runCode}
                         style={{
-                            display: "inline-block",
+                            padding: "12px 24px",
+                            height: "50px",
+                            backgroundColor: "#4CAF50",
+                            color: "white",
+                            border: "none",
+                            borderRadius: "4px",
+                            cursor: "pointer",
+                            fontSize: "16px",
+                            transition: "background-color 0.3s ease",
+                            display: "inline",
                             marginBottom: "20px",
                             marginTop: "10px",
-                            padding: "12px 24px",
-                            marginLeft: "410px",
-                            borderRadius: "4px",
-                            fontSize: "16px",
-                            height: "50px",
-                            backgroundColor: output.includes("passed")
-                                ? "#e8f5e9"
-                                : "rgba(244, 67, 54, 0.1)",
-                            color: output.includes("passed")
-                                ? "#2e7d32"
-                                : "#c62828",
-                            fontWeight: "bold",
+                            marginLeft: "10px",
                         }}
+                        onMouseOver={(e) =>
+                            (e.currentTarget.style.backgroundColor = "#45a049")
+                        }
+                        onMouseOut={(e) =>
+                            (e.currentTarget.style.backgroundColor = "#4CAF50")
+                        }
                     >
-                        {output}
-                    </div>
-                )}
+                        Run Tests
+                    </button>
+
+                    {output && (
+                        <div
+                            style={{
+                                marginBottom: "20px",
+                                marginTop: "10px",
+                                padding: "12px 24px",
+                                marginRight: "10px",
+                                borderRadius: "4px",
+                                fontSize: "16px",
+                                height: "50px",
+                                backgroundColor: output.includes("passed")
+                                    ? "#e8f5e9"
+                                    : "rgba(244, 67, 54, 0.1)",
+                                color: output.includes("passed")
+                                    ? "#2e7d32"
+                                    : "#c62828",
+                                fontWeight: "bold",
+                            }}
+                        >
+                            {output}
+                        </div>
+                    )}
+                </div>
+
                 <h3
                     style={{
+                        //marginTop: "20px",
                         marginBottom: "20px",
                         color: "white",
                         padding: "16px",
@@ -254,9 +326,10 @@ export default function CodingPage() {
                         <div
                             key={tc.id}
                             style={{
-                                border: "1px solid #ddd",
+                                border: "1px solid rgba(0, 0, 0, 0.5)",
                                 borderRadius: "8px",
                                 padding: "16px",
+                                margin: "5px",
                                 backgroundColor:
                                     tc.result === undefined
                                         ? "rgba(50, 50, 50, 0.5)"
