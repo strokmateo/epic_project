@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import CharacterDialog from "../../components/game-ui/characterDialog";
 
@@ -16,28 +16,66 @@ const TownHall: React.FC = () => {
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
     };
+
+    const [isHovered, setIsHovered] = useState(false);
+
+    const handleMouseEnter = () => {
+        setIsHovered(true);
+    };
+
+    const handleMouseLeave = () => {
+        setIsHovered(false);
+    };
     return (
-        <div style={backgroundStyle } className="w-screen h-screen bg-cover flex flex-col justify-between relative overflow-hidden">
+        <div
+            style={backgroundStyle}
+            className="animate-fade-in w-screen h-screen bg-cover flex flex-col justify-end relative overflow-hidden font-pixel"
+        >
+            {/* <button
+                style={{ backgroundColor: "black", width: "150px" }}
+                className="fixed left-20 top-1/2 -translate-y-1/2 bg-blue-500 text-white px-4 py-2 rounded z-40"
+                onClick={() => navigate("/leaderboard")}
+            >
+                LEADERBOARD
+            </button> */}
             <button
-                style={{ backgroundColor: "white" }}
+                style={{
+                    backgroundColor: "rgba(0, 0, 0, 0.5)",
+                    color: "white",
+                    width: "150px",
+                    position: "absolute",
+                    top: "20px",
+                    left: "20px",
+                    height: "50px",
+                    borderRadius: "10px",
+                    zIndex: 40,
+                }}
                 onClick={() => navigate("/map")}
             >
                 Back
             </button>
-            
-            <button
-                style={{ backgroundColor: "black", width: "150px" }}
-                className="fixed right-5 top-1/2 -translate-y-1/2 bg-blue-500 text-white px-4 py-2 rounded z-40"
-                onClick={() => navigate("/leaderboard")}
-            >
-                LEADERBOARD
-            </button>
+            <div className="animate-fade-in absolute top-1/4 left-20 w-1/2 h-1/2 bg-black bg-opacity-50 rounded-xl shadow-lg flex flex-col items-center justify-center">
+                <h1
+                    className="text-white text-7xl font-bold m-10 bg-black bg-opacity-50 hover:bg-opacity-100 p-10 rounded-xl transition-all duration-300 hover:scale-105 cursor-pointer"
+                    //onClick={() => navigate("/battle-screen")}
+                    onMouseEnter={handleMouseEnter}
+                    onMouseLeave={handleMouseLeave}
+                >
+                    START MISSION
+                </h1>
+                <h1
+                    className="text-white text-7xl font-bold m-10 bg-black bg-opacity-50 hover:bg-opacity-100 p-10 rounded-xl transition-all duration-300 hover:scale-105 cursor-pointer"
+                    onClick={() => navigate("/leaderboard")}
+                    onMouseEnter={handleMouseEnter}
+                    onMouseLeave={handleMouseLeave}
+                >
+                    LEADERBOARD
+                </h1>
+            </div>
             <CharacterDialog
-                            characterSrc="src/assets/images/rich-man-1.png"
-                            text={
-                                "Step away, nigga!!"
-                            }
-                        />  
+                characterSrc="src/assets/images/rich-man-1.png"
+                text="Choose your next move nigga."
+            />
         </div>
     );
 };

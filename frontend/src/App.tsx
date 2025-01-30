@@ -7,7 +7,7 @@ import TownHall from "./pages/houses/TownHall";
 import Tavern from "./pages/houses/Tavern";
 import Alley from "./pages/houses/Alley";
 import WizardHut from "./pages/houses/WizardHut";
-import Leaderboard from "./pages/leaderboard/leaderboard";
+import Leaderboard from "./pages/leaderboard/Leaderboard";
 
 function App() {
     return (

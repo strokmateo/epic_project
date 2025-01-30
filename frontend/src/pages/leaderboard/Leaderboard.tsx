@@ -15,10 +15,21 @@ const Leaderboard: React.FC = () => {
         backgroundRepeat: "no-repeat",
     };
     return (
-        <div style={backgroundStyle} className="overflow-hidden font-pixel">
+        <div
+            style={backgroundStyle}
+            className="animate-fade-in overflow-hidden font-pixel"
+        >
             <button
                 style={{
-                    backgroundColor: "white",
+                    backgroundColor: "rgba(0, 0, 0, 0.5)",
+                    color: "white",
+                    width: "150px",
+                    position: "absolute",
+                    top: "20px",
+                    left: "20px",
+                    height: "50px",
+                    borderRadius: "10px",
+                    zIndex: 40,
                 }}
                 onClick={() => navigate("/town-hall")}
             >
