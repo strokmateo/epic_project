@@ -7,7 +7,8 @@ import TownHall from "./pages/houses/TownHall";
 import Tavern from "./pages/houses/Tavern";
 import Alley from "./pages/houses/Alley";
 import WizardHut from "./pages/houses/WizardHut";
-import Leaderboard from "./pages/leaderboard/leaderboard";
+import Leaderboard from "./pages/leaderboard/Leaderboard";
+import BattleScreen from "./pages/battlescreen/BattleScreen";
 
 function App() {
     return (
@@ -22,6 +23,7 @@ function App() {
                 <Route path="/alley" element={<Alley />} />
                 <Route path="/wizard-hut" element={<WizardHut />} />
                 <Route path="/leaderboard" element={<Leaderboard />} />
+                <Route path= "/battle-screen" element={<BattleScreen />} />
             </Routes>
         </Router>
     );
