@@ -23,6 +23,13 @@ const TownHall: React.FC = () => {
             >
                 Back
             </button>
+            <button
+                style={{ backgroundColor: "black", width: "150px" }}
+                className="fixed right-5 top-1/2 -translate-y-1/2 bg-blue-500 text-white px-4 py-2 rounded"
+                onClick={() => navigate("/leaderboard")}
+            >
+                LEADERBOARD
+            </button>
         </div>
     );
 };
