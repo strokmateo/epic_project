@@ -57,7 +57,7 @@ const TownHall: React.FC = () => {
             <div className="animate-fade-in absolute top-1/4 left-20 w-1/2 h-1/2 bg-black bg-opacity-50 rounded-xl shadow-lg flex flex-col items-center justify-center">
                 <h1
                     className="text-white text-7xl font-bold m-10 bg-black bg-opacity-50 hover:bg-opacity-100 p-10 rounded-xl transition-all duration-300 hover:scale-105 cursor-pointer"
-                    //onClick={() => navigate("/battle-screen")}
+                    onClick={() => navigate("/battle-screen")}
                     onMouseEnter={handleMouseEnter}
                     onMouseLeave={handleMouseLeave}
                 >
