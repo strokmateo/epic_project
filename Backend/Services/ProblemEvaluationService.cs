@@ -72,10 +72,15 @@ namespace Backend.Services
                 }
             }
             result.AllTestsPassed = result.TestCaseResults.All(result => result.Passed);
-            int totalXp = passedTestCases * xpPerTestCase;
-            int totalCoins = passedTestCases * coinsPerTestCase;
-            if (totalXp > 0)
+            int totalXp = 0;
+            int totalCoins = 0;
+            if (result.AllTestsPassed)
             {
+                  totalXp = 500;
+                totalCoins = 125;
+            }
+            
+            
                 Console.WriteLine($"Adding {totalXp} XP to user {userId}");
                 var xpResult = await _userService.AddXP(userId, totalXp);
                 if (!xpResult.Succeeded)
@@ -86,9 +91,8 @@ namespace Backend.Services
                 {
                     Console.WriteLine($"XP successfully added. User now has {totalXp} more XP.");
                 }
-            }
-            if(totalCoins > 0)
-            {
+            
+            
                 Console.WriteLine($"Adding {totalCoins} coins to user {userId}");
                 var coinResult = await _userService.AddCoins(userId, totalCoins);
                 if (!coinResult.Succeeded)
@@ -99,7 +103,7 @@ namespace Backend.Services
                 {
                     Console.WriteLine($"Coins successfully added. User now has {totalCoins} more coins.");
                 }
-            }
+            
 
             return result;
         }
