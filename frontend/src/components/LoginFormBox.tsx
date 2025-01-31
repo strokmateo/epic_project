@@ -7,8 +7,8 @@ import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import Circle from "@/assets/images/circle.svg";
 import Lock from "@/assets/images/lock.svg";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 const loginSchema = z.object({
     emailUsername: z
@@ -25,6 +25,7 @@ type Login = z.infer<typeof loginSchema>;
 
 export default function LoginFormBox() {
     const navigate = useNavigate();
+    const { login } = useAuth();
     const form = useForm<z.infer<typeof loginSchema>>({
         resolver: zodResolver(loginSchema),
         defaultValues: {
@@ -35,25 +36,13 @@ export default function LoginFormBox() {
 
     async function onSubmit(values: Login) {
         try {
-            const response = await axios.post(
-                "https://localhost:7092/api/auth/login",
-                values
-            );
-            console.log("Response:", response); // Log the success response
-            navigate("/map");
+            await login(values.emailUsername, values.password);
+            navigate("/map"); // Redirect after successful login
         } catch (error) {
-            if (axios.isAxiosError(error) && error.response?.data) {
-                // Handle server errors
-                const errorMessage =
-                    error.response.data || "An error occurred";
-
-                form.setError("password", {
-                    type: "server",
-                    message: errorMessage,
-                });
-            } else {
-                console.error("Unexpected error:", error);
-            }
+            form.setError("password", {
+                type: "server",
+                message: "Invalid email or password.",
+            });
         }
     }
 

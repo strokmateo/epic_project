@@ -1,6 +1,20 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Editor from "@monaco-editor/react";
 import axios from "axios";
+import {
+    AlertDialog,
+    AlertDialogTrigger,
+    AlertDialogContent,
+    AlertDialogTitle,
+    AlertDialogDescription,
+    AlertDialogCancel,
+    AlertDialogAction,
+} from "@radix-ui/react-alert-dialog";
+import {
+    AlertDialogHeader,
+    AlertDialogFooter,
+} from "../../components/ui/alert-dialog";
+import { useAuth, User } from "../../context/AuthContext";
 
 interface TestCase {
     id: number;
@@ -44,9 +58,18 @@ export default function CodingPage() {
     const [testCases, setTestCases] = useState<TestCase[]>([]);
     const [output, setOutput] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
-
+    const [youWin, setYouWin] = useState(false);
+    const [bossHealth, setBossHealth] = useState(50);
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
     // Fetch problem data when component mounts
     axios.defaults.baseURL = "https://localhost:7092";
+
+    useEffect(() => {
+        if (bossHealth === 0) {
+            setYouWin(true);
+            setIsDialogOpen(true); // Open dialog when boss health is 0
+        }
+    }, [bossHealth]);
 
     const handleSubmit = async () => {
         setIsSubmitting(true);
@@ -75,6 +98,9 @@ export default function CodingPage() {
                     ? "All tests passed!"
                     : "Some tests failed"
             );
+            setBossHealth(
+                50 - transformedTestCases.filter((tc) => tc.result).length * 10
+            );
         } catch (error) {
             console.error("Submission failed:", error);
             setOutput("Error submitting solution");
@@ -83,7 +109,6 @@ export default function CodingPage() {
         }
     };
 
-    const bossHp = 50;
     const userHp = 100;
 
     return (
@@ -104,6 +129,50 @@ export default function CodingPage() {
             className="font-pixel"
         >
             {/* Top-Left: Code Editor */}
+            {/* 🏆 WIN DIALOG */}
+            {youWin && (
+                <AlertDialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                    <AlertDialogTrigger asChild>
+                        <button style={{ display: "none" }}>Open</button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent
+                        className="top-1/3 absolute z-50 text-white w-1/3 h-1/3 left-1/3 animate-fade-in flex flex-col justify-between p-14"
+                        style={{ backgroundColor: "rgba(30, 30, 30)" }}
+                    >
+                        <AlertDialogHeader>
+                            <AlertDialogTitle>🎉 You Win!</AlertDialogTitle>
+                            <AlertDialogDescription>
+                                Congratulations! You have defeated the final
+                                boss.
+                            </AlertDialogDescription>
+                            <AlertDialogDescription>
+                                <div>
+                                    Xp earned:{" "}
+                                    <span className="text-blue-400">500</span>
+                                </div>
+                                <div>
+                                    Coins earned:{" "}
+                                    <span className="text-yellow-300">125</span>
+                                </div>
+                            </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                            <AlertDialogCancel
+                                onClick={() => {
+                                    setIsDialogOpen(false);
+                                }}
+                            >
+                                Close
+                            </AlertDialogCancel>
+                            <AlertDialogAction
+                                onClick={() => window.location.reload()}
+                            >
+                                Play Again
+                            </AlertDialogAction>
+                        </AlertDialogFooter>
+                    </AlertDialogContent>
+                </AlertDialog>
+            )}
             <div style={{ border: "1px solid #ccc", borderRadius: "4px" }}>
                 <Editor
                     height="100%"
@@ -135,7 +204,7 @@ export default function CodingPage() {
                 {/* responzivnost je sjebana zbog slike (slika je prevelika) */}
                 <div className="flex flex-row justify-between items-center w-full p-5">
                     <div className="text-4xl text-white absolute bottom-20 bg-black justify-left items-left">
-                        BOSS HP: {bossHp}
+                        BOSS HP: {bossHealth}
                     </div>
                     <div className="text-4xl text-white absolute bottom-5 bg-black justify-right items-right">
                         USER HP: {userHp}
@@ -143,6 +212,7 @@ export default function CodingPage() {
                 </div>
 
                 <img
+                    draggable={false}
                     src="src/assets/images/final-boss.png"
                     className="scale-150 translate-x-40 drop-shadow-[5px_0px_20px_rgba(0,0,0,1)]"
                 />

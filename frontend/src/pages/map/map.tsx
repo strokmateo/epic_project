@@ -1,8 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth, User } from "../../context/AuthContext";
+import axios from "axios";
 
 const Map: React.FC = () => {
     const navigate = useNavigate();
+    const { user, login } = useAuth();
+    const [fullUser, setFullUser] = useState<User | null>(user);
 
     const houses = [
         {
@@ -34,6 +38,26 @@ const Map: React.FC = () => {
             y: "76%",
         },
     ];
+
+    useEffect(() => {
+        const fetchUserDetails = async () => {
+            if (user?.email) {
+                try {
+                    const response = await axios.get(
+                        `https://localhost:7092/api/user/current?email=${encodeURIComponent(
+                            user.email
+                        )}`
+                    );
+                    setFullUser(response.data); // Update with full user info
+                    console.log(response.data);
+                } catch (error) {
+                    console.error("Failed to fetch user details", error);
+                }
+            }
+        };
+
+        fetchUserDetails();
+    }, [user]); // Runs when `user` updates
 
     //state za hoveranu kuću
     const [hoveredHouse, setHoveredHouse] = useState<null | {
@@ -92,6 +116,22 @@ const Map: React.FC = () => {
             }}
             className="animate-fade-in"
         >
+            {fullUser ? (
+                <div className="absolute top-0 left-0 bg-black w-[250px] h-[100px] z-50 opacity-80 rounded-sm mt-2 ml-2 flex flex-col justify-around py-2">
+                    <p className="text-white pl-2">User: {fullUser.username}</p>
+                    <p className="text-white pl-2">Xp: {fullUser.xp}</p>{" "}
+                    {/* Match lowercase */}
+                    <p className="text-white pl-2">
+                        Coins: {fullUser.coins}
+                    </p>{" "}
+                    {/* Match lowercase */}
+                </div>
+            ) : (
+                <div className="absolute top-0 left-0 bg-black w-[250px] h-[100px] z-50 opacity-80 rounded-sm mt-2 ml-2 flex flex-col justify-around py-2">
+                    <p className="text-white pl-2">Loading user info...</p>
+                </div>
+            )}
+
             {houses.map((house) => (
                 <div
                     //slika nije kako treba jer nemam photoshop na laptopu - photopea šteka jako (promijeniti)
