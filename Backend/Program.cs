@@ -93,6 +93,7 @@ builder.Services.AddScoped<ICodeExecutionService, CodeExecutionService>();
 builder.Services.AddScoped<ICodeExecutionService, CodeExecutionService>();
 builder.Services.AddScoped<ICodingProblemRepository, CodingProblemRepository>();
 builder.Services.AddScoped<IProblemEvaluationService, ProblemEvaluationService>();
+builder.Services.AddScoped<ICodingProblemService, CodingProblemService>();
 
 // Basic identity framework options.
 builder.Services.AddIdentityCore<User>(options =>

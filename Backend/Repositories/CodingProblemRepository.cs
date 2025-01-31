@@ -34,7 +34,9 @@ namespace Backend.Repositories
 
         public async Task<CodingProblem?> GetByIdAsync(int id)
         {
-            return await _dbSet.FirstOrDefaultAsync(c => c.Id == id);
+            return await _dbSet
+                .Include(cp => cp.TestCases)
+                .FirstOrDefaultAsync(c => c.Id == id);
         }
 
         public Task<CodingProblem?> GetByIdAsync(Guid id)

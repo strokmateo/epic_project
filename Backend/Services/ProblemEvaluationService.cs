@@ -38,7 +38,11 @@ namespace Backend.Services
                 {
                     Code = userCode,
                     Input = testCase.Input,
-                    ExpectedOutput = testCase.ExpectedOutput
+                    ExpectedOutput = testCase.ExpectedOutput,
+                    Id = new Guid(),
+                    CodingProblemId = problemId,
+                    TestCases = new List<TestCase> { testCase },
+
                 };
 
                 var checkResult = await _executionService.ExecuteCode(submission);

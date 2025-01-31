@@ -14,12 +14,51 @@ public class CodeExecutionService(IUserService userService, ICodingProblemReposi
 
     public async Task<CodeCheckResult> ExecuteCode(CodeSubmission submission)
     {
+        if (submission == null)
+        {
+            throw new ArgumentNullException(nameof(submission), "Submission cannot be null.");
+        }
+
+        if (string.IsNullOrWhiteSpace(submission.Code))
+        {
+            return new CodeCheckResult
+            {
+                isCorrect = false,
+                ActualOutput = "if submission code isn't found",
+                ExpectedOutput = submission.ExpectedOutput,
+                ErrorMessage = "Submitted code is empty."
+            };
+        }
+
+        Console.WriteLine("this is the submission's problem id:" + submission.CodingProblemId + "\n" + "this is the submitions code: " + submission.Code);
+        var currentProblem = await _codingProblemRepository.GetByIdAsync(submission.CodingProblemId);
+        if (currentProblem == null)
+        {
+            return new CodeCheckResult
+            {
+                isCorrect = false,
+                ActualOutput = "if problem isnt found",
+                ExpectedOutput = submission.ExpectedOutput,
+                ErrorMessage = "Problem not found in the database."
+            };
+        }
+
+        if (submission.TestCases == null || !submission.TestCases.Any())
+        {
+            return new CodeCheckResult
+            {
+                isCorrect = false,
+                ActualOutput = "if test cases is null",
+                ExpectedOutput = submission.ExpectedOutput,
+                ErrorMessage = "No test cases provided for execution."
+            };
+        }
+
         // Wrap the submitted code with the input and execution logic
+        // Ensure `submission.Code` does not cause syntax errors
         string wrappedCode = $@"
-            var dragonLair = function(n, matrix){{
-                {submission.Code}
-            }};
-            const input = `{submission.Input}`.trim().split('\n');
+            {submission.Code}
+            const input =  `{submission.Input}`.trim().split('\n');
             const n = parseInt(input[0].trim());
             const matrix = [];
             for (let i = 1; i <= n; i++) {{
@@ -33,6 +72,8 @@ public class CodeExecutionService(IUserService userService, ICodingProblemReposi
                 console.error(error.message);
             }}
         ";
+
+
 
         // Save the wrapped code to a temporary file
         var tempFilePath = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid()}.js");
@@ -54,33 +95,38 @@ public class CodeExecutionService(IUserService userService, ICodingProblemReposi
                 }
             };
 
+            Console.WriteLine($"Executing Node.js script: {tempFilePath}");
+
             process.Start();
 
-            // Capture the output and errors
+            // Capture output and errors
             var output = await process.StandardOutput.ReadToEndAsync();
             var errors = await process.StandardError.ReadToEndAsync();
-            process.WaitForExit();
+            await process.WaitForExitAsync();
 
-            // Check if the output matches the expected output
-            var isCorrect = output.Trim() == submission.ExpectedOutput.Trim();
+            Console.WriteLine($"Node.js Output: {output}");
+            Console.WriteLine($"Node.js Errors: {errors}");
 
-            // Calculate XP based on passed test cases
-            var currentProblem = await _codingProblemRepository.GetByIdAsync(submission.CodingProblemId);
-            int testCasesPassed = isCorrect ? submission.TestCases.Count : CountPassedTestCases(submission);
-            int xpEarned = (int)Math.Round(testCasesPassed * 200 * currentProblem.DifficultyMultiplier);
-
-            if (testCasesPassed == submission.TestCases.Count)
+            if (!string.IsNullOrWhiteSpace(errors))
             {
-                await _userService.AddXP(submission.UserId, xpEarned);
+                return new CodeCheckResult
+                {
+                    isCorrect = false,
+                    ActualOutput = errors.Trim(),
+                    ExpectedOutput = submission.ExpectedOutput,
+                    ErrorMessage = errors.Trim()
+                };
             }
 
-            // Return the result
+            var actualOutput = output.Trim();
+            var isCorrect = actualOutput == submission.ExpectedOutput.Trim();
+
             return new CodeCheckResult
             {
                 isCorrect = isCorrect,
-                ActualOutput = output,
+                ActualOutput = actualOutput,
                 ExpectedOutput = submission.ExpectedOutput,
-                ErrorMessage = process.ExitCode != 0 ? errors : null
+                ErrorMessage = process.ExitCode != 0 ? errors.Trim() : null
             };
         }
         finally
@@ -92,6 +138,7 @@ public class CodeExecutionService(IUserService userService, ICodingProblemReposi
             }
         }
     }
+
 
     private int CountPassedTestCases(CodeSubmission submission)
     {
