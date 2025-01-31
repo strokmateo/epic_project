@@ -1,7 +1,6 @@
 import { useState} from "react";
 import Editor from "@monaco-editor/react";
-import axios from "axios";
-
+import CharacterDialog from "../../components/game-ui/characterDialog";
 
 interface TestCase {
     id: number;
@@ -34,7 +33,7 @@ interface SubmissionResult {
 
 export default function CodingPage() {
     const [code, setCode] = useState(
-        `var dragonLair = function(n, matrix) {\n    // Your code here\n};`
+        `/***\n| * @param {number[][]} matrix\n| * @param {number} n\n| * @return {number}\n */\nvar dragonLair = function(matrix, n) {\n    // Your code here\n};`
     );
     const [problemData] = useState<ProblemData>({
         id: 0,
@@ -44,29 +43,56 @@ export default function CodingPage() {
     });
     const [testCases, setTestCases] = useState<TestCase[]>([]);
     const [output, setOutput] = useState("");
-    const [isSubmitting, setIsSubmitting] = useState(false);
 
-    // Fetch problem data when component mounts
-    axios.defaults.baseURL = "https://localhost:7092";
+    // Fetch test cases from backend
+    useEffect(() => {
+        // Simulated API call
+        const mockData: ProblemData = {
+            title: "Dragon's Lair: Square Grid Treasure Hunt",
+            description:
+                'In the heart of the Firepeak Mountains lies the lair of an ancient dragon, guardian of a legendary treasure. To claim the hoard, adventurers must first solve the dragon’s riddle:\r\n\r\n"A grid of magic seals, square and bright,\r\nGuards the path to treasures of light.\r\nSum the seals where row and column align,\r\nAnd the vault shall open—prove your mind!"\r\n\r\nThe dragon conjures an n x n grid of glowing magical seals. Each seal holds an integer value. Your task is to compute the sum of the seals along the main diagonal (from the top-left to the bottom-right corner). Only then will the dragon’s barrier fall!',
+            testCases: [
+                {
+                    id: 1,
+                    input: JSON.stringify([
+                        [1, 2],
+                        [3, 4],
+                    ]),
+                    expected: "5",
+                },
+                {
+                    id: 2,
+                    input: JSON.stringify([
+                        [5, 6, 7],
+                        [8, 9, 10],
+                        [11, 12, 13],
+                    ]),
+                    expected: "27",
+                },
+            ],
+        };
+        setProblemData(mockData);
+        setTestCases(mockData.testCases);
+    }, []);
 
-    const handleSubmit = async () => {
-        setIsSubmitting(true);
+    const runCode = () => {
         try {
-            const response = await axios.post<SubmissionResult>(
-                `/api/problems/submit/1`,
-                { code: code }
-            );
-            console.log("Submission Response:", response.data);
-
-            const transformedTestCases = response.data.testCaseResults.map((tc, index) => ({
-                id: tc.testCaseId ?? index, // Use index if ID is missing
-                input: tc.isHidden ? '*****' : tc.input,
-                expected: tc.isHidden ? '*****' : tc.expectedOutput,
-                actual: tc.actualOutput.trim(),
-                result: tc.passed,
-                isHidden: tc.isHidden
-            }));
-            console.log("Submitting code:", code);
+            const func = new Function("matrix", "n", code);
+            const updatedCases = testCases.map((tc) => {
+                try {
+                    const inputMatrix = JSON.parse(tc.input);
+                    const n = inputMatrix.length;
+                    const actual = func(inputMatrix, n);
+                    return {
+                        ...tc,
+                        actual: String(actual),
+                        result: actual === parseInt(tc.expected),
+                    };
+                } catch (error) {
+                    console.error(`Test case ${tc.id} error:`, error);
+                    return { ...tc, result: false, actual: "Error" };
+                }
+            });
 
             setTestCases(transformedTestCases);
             setOutput(response.data.allTestsPassed ? "All tests passed!" : "Some tests failed");
@@ -78,6 +104,8 @@ export default function CodingPage() {
             setIsSubmitting(false);
         }
     };
+
+    const heartNumber = 5;
 
     return (
         <div
@@ -121,18 +149,10 @@ export default function CodingPage() {
                 <img
                     src="src/assets/images/final-boss.png"
                     className="scale-150 translate-x-40 drop-shadow-[5px_0px_20px_rgba(0,0,0,1)]"
-                    alt="Final Boss"
                 />
-                <div className="absolute bottom-0 bg-red-500 justify-left items-left">
-                    <img
-                        className="w-20 h-20 mb-10 ml-5"
-                        src="src/assets/images/heart-full.png"
-                        alt="Heart"
-                    />
-                </div>
             </div>
 
-            {/* Bottom-Left: Problem Description */}
+            {/* Bottom-Left: Problem & Test Cases */}
             <div
                 style={{
                     gridColumn: "1 / 2",
@@ -157,19 +177,90 @@ export default function CodingPage() {
                         {problemData.description}
                     </p>
                 </div>
-            </div>
 
-            {/* Bottom-Right: Test Cases & Controls */}
-            <div
-                style={{
-                    border: "1px solid #ccc",
-                    borderRadius: "4px",
-                    overflowY: "auto",
-                    backgroundColor: "rgba(100, 100, 100, 0.3)",
-                    color: "white",
-                    padding: "16px",
-                }}
-            >
+                <h3 style={{ marginBottom: "16px" }}>Test Cases</h3>
+                <div
+                    style={{
+                        backgroundColor: "rgba(50, 50, 50, 0.75)",
+                        display: "grid",
+                        gridTemplateColumns: "1fr 1fr",
+                        gap: "16px",
+                        marginBottom: "20px",
+                        color: "white",
+                    }}
+                >
+                    {testCases.map((tc) => (
+                        <div
+                            key={tc.id}
+                            style={{
+                                border: "1px solid #ddd",
+                                borderRadius: "8px",
+                                padding: "16px",
+                                backgroundColor:
+                                    tc.result === undefined
+                                        ? "rgba(50, 50, 50, 0.5)"
+                                        : tc.result
+                                        ? "rgba(30, 130, 76, 0.7)"
+                                        : "rgba(100, 0, 0, 0.7)",
+                                transition: "background-color 0.3s ease",
+                            }}
+                        >
+                            <div
+                                style={{
+                                    display: "flex",
+                                    justifyContent: "space-between",
+                                    marginBottom: "12px",
+                                }}
+                            >
+                                <strong>Test Case #{tc.id}</strong>
+                                {tc.result !== undefined && (
+                                    <span
+                                        style={{
+                                            color: tc.result
+                                                ? "#2e7d32"
+                                                : "#c62828",
+                                            fontWeight: "bold",
+                                        }}
+                                    >
+                                        {tc.result ? "PASSED" : "FAILED"}
+                                    </span>
+                                )}
+                            </div>
+                            <div style={{ marginBottom: "8px" }}>
+                                <div
+                                    style={{
+                                        fontWeight: "500",
+                                        marginBottom: "4px",
+                                    }}
+                                >
+                                    Input Matrix:
+                                </div>
+                                <pre
+                                    style={{
+                                        backgroundColor:
+                                            "rgba(30, 30, 30, 0.7)",
+                                        color: "white",
+                                        padding: "8px",
+                                        borderRadius: "4px",
+                                        overflowX: "auto",
+                                        fontSize: "14px",
+                                    }}
+                                >
+                                    {tc.input}
+                                </pre>
+                            </div>
+                            <div style={{ marginBottom: "8px" }}>
+                                <strong>Expected:</strong> {tc.expected}
+                            </div>
+                            {tc.actual !== undefined && (
+                                <div>
+                                    <strong>Actual:</strong> {tc.actual}
+                                </div>
+                            )}
+                        </div>
+                    ))}
+                </div>
+
                 <div
                     style={{
                         display: "flex",
@@ -179,20 +270,25 @@ export default function CodingPage() {
                     }}
                 >
                     <button
-                        onClick={handleSubmit}
-                        disabled={isSubmitting}
+                        onClick={runCode}
                         style={{
                             padding: "12px 24px",
-                            backgroundColor: isSubmitting ? "#666" : "#4CAF50",
+                            backgroundColor: "#4CAF50",
                             color: "white",
                             border: "none",
                             borderRadius: "4px",
-                            cursor: isSubmitting ? "not-allowed" : "pointer",
+                            cursor: "pointer",
+                            fontSize: "16px",
                             transition: "background-color 0.3s ease",
-                            fontSize: "16px"
                         }}
+                        onMouseOver={(e) =>
+                            (e.currentTarget.style.backgroundColor = "#45a049")
+                        }
+                        onMouseOut={(e) =>
+                            (e.currentTarget.style.backgroundColor = "#4CAF50")
+                        }
                     >
-                        {isSubmitting ? "Submitting..." : "Submit Solution"}
+                        Run Tests
                     </button>
 
                     {output && (
@@ -212,84 +308,6 @@ export default function CodingPage() {
                             {output}
                         </div>
                     )}
-                    
-                </div>
-
-                <h3 style={{ marginBottom: "16px" }}>Test Cases</h3>
-                <div
-                    style={{
-                        display: "grid",
-                        gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
-                        gap: "16px",
-                    }}
-                >
-                    {testCases.map((tc) => (
-                        <div
-                            key={'${tc.id}-${index}'}
-                            style={{
-                                border: "1px solid #444",
-                                borderRadius: "8px",
-                                padding: "16px",
-                                backgroundColor: tc.result === undefined 
-                                    ? "rgba(50, 50, 50, 0.5)" 
-                                    : tc.result 
-                                    ? "rgba(46, 125, 50, 0.3)" 
-                                    : "rgba(211, 47, 47, 0.3)",
-                                transition: "background-color 0.3s ease",
-                                opacity: tc.isHidden ? 0.8 : 1
-                            }}
-                        >
-                            <div style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                                marginBottom: "12px"
-                            }}>
-                                <strong>
-                                    {tc.isHidden ? 'Hidden Test Case' : `Test Case #${tc.id}`}
-                                </strong>
-                                {tc.result !== undefined && (
-                                    <span style={{
-                                        color: tc.result ? '#81c784' : '#e57373',
-                                        fontWeight: "bold"
-                                    }}>
-                                        {tc.result ? "PASSED" : "FAILED"}
-                                    </span>
-                                )}
-                            </div>
-                            {!tc.isHidden && (
-                                <>
-                                    <div style={{ marginBottom: "8px" }}>
-                                        <div style={{ fontWeight: 500, marginBottom: "4px" }}>
-                                            Input:
-                                        </div>
-                                        <pre style={{
-                                            backgroundColor: "rgba(0, 0, 0, 0.3)",
-                                            padding: "8px",
-                                            borderRadius: "4px",
-                                            overflowX: "auto"
-                                        }}>
-                                            {tc.input}
-                                        </pre>
-                                    </div>
-                                    <div style={{ marginBottom: "8px" }}>
-                                        <strong>Expected:</strong> {tc.expected}
-                                    </div>
-                                </>
-                            )}
-
-
-
-                            {!tc.isHidden && (
-                                     <div>
-                                     <strong>Actual:</strong> {tc.actual}
-                                 </div>
-     
-                            )}
-                           
-                           
-                            
-                        </div>
-                    ))}
                 </div>
             </div>
         </div>

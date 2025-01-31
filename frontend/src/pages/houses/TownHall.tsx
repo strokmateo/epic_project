@@ -31,13 +31,6 @@ const TownHall: React.FC = () => {
             style={backgroundStyle}
             className="animate-fade-in w-screen h-screen bg-cover flex flex-col justify-end relative overflow-hidden font-pixel"
         >
-            {/* <button
-                style={{ backgroundColor: "black", width: "150px" }}
-                className="fixed left-20 top-1/2 -translate-y-1/2 bg-blue-500 text-white px-4 py-2 rounded z-40"
-                onClick={() => navigate("/leaderboard")}
-            >
-                LEADERBOARD
-            </button> */}
             <button
                 style={{
                     backgroundColor: "rgba(0, 0, 0, 0.5)",
