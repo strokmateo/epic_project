@@ -1,4 +1,4 @@
-import { useState} from "react";
+import { useState } from "react";
 import Editor from "@monaco-editor/react";
 import axios from "axios";
 
@@ -57,21 +57,26 @@ export default function CodingPage() {
             );
             console.log("Submission Response:", response.data);
 
-            const transformedTestCases = response.data.testCaseResults.map((tc, index) => ({
-                id: tc.testCaseId ?? index, // Use index if ID is missing
-                input: tc.isHidden ? '*****' : tc.input,
-                expected: tc.isHidden ? '*****' : tc.expectedOutput,
-                actual: tc.actualOutput.trim(),
-                result: tc.passed,
-                isHidden: tc.isHidden
-            }));
+            const transformedTestCases = response.data.testCaseResults.map(
+                (tc, index) => ({
+                    id: tc.testCaseId ?? index, // Use index if ID is missing
+                    input: tc.isHidden ? "*****" : tc.input,
+                    expected: tc.isHidden ? "*****" : tc.expectedOutput,
+                    actual: tc.actualOutput.trim(),
+                    result: tc.passed,
+                    isHidden: tc.isHidden,
+                })
+            );
             console.log("Submitting code:", code);
 
             setTestCases(transformedTestCases);
-            setOutput(response.data.allTestsPassed ? "All tests passed!" : "Some tests failed");
-            
+            setOutput(
+                response.data.allTestsPassed
+                    ? "All tests passed!"
+                    : "Some tests failed"
+            );
         } catch (error) {
-            console.error('Submission failed:', error);
+            console.error("Submission failed:", error);
             setOutput("Error submitting solution");
         } finally {
             setIsSubmitting(false);
@@ -79,7 +84,6 @@ export default function CodingPage() {
     };
 
     return (
-        
         <div
             style={{
                 backgroundImage: "url(src/assets/images/fight-background.png)",
@@ -111,7 +115,8 @@ export default function CodingPage() {
             {/* Top-Right: Monster */}
             <div
                 style={{
-                    backgroundImage: "url(src/assets/images/final-boss-background.png)",
+                    backgroundImage:
+                        "url(src/assets/images/final-boss-background.png)",
                     backgroundSize: "cover",
                     backgroundPosition: "center",
                     border: "1px solid #ccc",
@@ -187,7 +192,7 @@ export default function CodingPage() {
                             borderRadius: "4px",
                             cursor: isSubmitting ? "not-allowed" : "pointer",
                             transition: "background-color 0.3s ease",
-                            fontSize: "16px"
+                            fontSize: "16px",
                         }}
                     >
                         {isSubmitting ? "Submitting..." : "Submit Solution"}
@@ -210,46 +215,55 @@ export default function CodingPage() {
                             {output}
                         </div>
                     )}
-                    
                 </div>
 
                 <h3 style={{ marginBottom: "16px" }}>Test Cases</h3>
                 <div
                     style={{
                         display: "grid",
-                        gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
+                        gridTemplateColumns:
+                            "repeat(auto-fill, minmax(300px, 1fr))",
                         gap: "16px",
                     }}
                 >
                     {testCases.map((tc, index) => (
                         <div
-                            key={'${tc.id}-${index}'}
+                            key={"${tc.id}-${index}"}
                             style={{
                                 border: "1px solid #444",
                                 borderRadius: "8px",
                                 padding: "16px",
-                                backgroundColor: tc.result === undefined 
-                                    ? "rgba(50, 50, 50, 0.5)" 
-                                    : tc.result 
-                                    ? "rgba(46, 125, 50, 0.3)" 
-                                    : "rgba(211, 47, 47, 0.3)",
+                                backgroundColor:
+                                    tc.result === undefined
+                                        ? "rgba(50, 50, 50, 0.5)"
+                                        : tc.result
+                                        ? "rgba(46, 125, 50, 0.3)"
+                                        : "rgba(211, 47, 47, 0.3)",
                                 transition: "background-color 0.3s ease",
-                                opacity: tc.isHidden ? 0.8 : 1
+                                opacity: tc.isHidden ? 0.8 : 1,
                             }}
                         >
-                            <div style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                                marginBottom: "12px"
-                            }}>
+                            <div
+                                style={{
+                                    display: "flex",
+                                    justifyContent: "space-between",
+                                    marginBottom: "12px",
+                                }}
+                            >
                                 <strong>
-                                    {tc.isHidden ? 'Hidden Test Case' : `Test Case #${tc.id}`}
+                                    {tc.isHidden
+                                        ? "Hidden Test Case"
+                                        : `Test Case #${tc.id}`}
                                 </strong>
                                 {tc.result !== undefined && (
-                                    <span style={{
-                                        color: tc.result ? '#81c784' : '#e57373',
-                                        fontWeight: "bold"
-                                    }}>
+                                    <span
+                                        style={{
+                                            color: tc.result
+                                                ? "#81c784"
+                                                : "#e57373",
+                                            fontWeight: "bold",
+                                        }}
+                                    >
                                         {tc.result ? "PASSED" : "FAILED"}
                                     </span>
                                 )}
@@ -257,15 +271,23 @@ export default function CodingPage() {
                             {!tc.isHidden && (
                                 <>
                                     <div style={{ marginBottom: "8px" }}>
-                                        <div style={{ fontWeight: 500, marginBottom: "4px" }}>
+                                        <div
+                                            style={{
+                                                fontWeight: 500,
+                                                marginBottom: "4px",
+                                            }}
+                                        >
                                             Input:
                                         </div>
-                                        <pre style={{
-                                            backgroundColor: "rgba(0, 0, 0, 0.3)",
-                                            padding: "8px",
-                                            borderRadius: "4px",
-                                            overflowX: "auto"
-                                        }}>
+                                        <pre
+                                            style={{
+                                                backgroundColor:
+                                                    "rgba(0, 0, 0, 0.3)",
+                                                padding: "8px",
+                                                borderRadius: "4px",
+                                                overflowX: "auto",
+                                            }}
+                                        >
                                             {tc.input}
                                         </pre>
                                     </div>
@@ -275,17 +297,11 @@ export default function CodingPage() {
                                 </>
                             )}
 
-
-
                             {!tc.isHidden && (
-                                     <div>
-                                     <strong>Actual:</strong> {tc.actual}
-                                 </div>
-     
+                                <div>
+                                    <strong>Actual:</strong> {tc.actual}
+                                </div>
                             )}
-                           
-                           
-                            
                         </div>
                     ))}
                 </div>
