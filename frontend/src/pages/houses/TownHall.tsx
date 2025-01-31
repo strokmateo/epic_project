@@ -67,7 +67,7 @@ const TownHall: React.FC = () => {
             </div>
             <CharacterDialog
                 characterSrc="src/assets/images/rich-man-1.png"
-                text="Choose your next move nigga."
+                text="Choose your next move."
             />
         </div>
     );
