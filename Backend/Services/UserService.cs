@@ -1,5 +1,6 @@
 ﻿using Backend.Entities;
 using Backend.Models;
+using Backend.Models.Leaderboard;
 using Backend.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -71,5 +72,34 @@ namespace Backend.Services
             }
         }
 
+        public async Task<Result<LeaderboardDTO>> GetLeaderboardAsync()
+        {
+            try
+            {
+                var users = await _userManager.Users
+                    .OrderByDescending(u => u.XP) 
+                    .Select(u => new LeaderboardEntryDTO
+                    {
+                        UserId = u.Id,
+                        Username = u.UserName,
+                        Xp = u.XP,
+                        Coins = u.Coins
+                    })
+                    .ToListAsync();
+
+                if (!users.Any())
+                {
+                    return Result<LeaderboardDTO>.Failure("No leaderboard data available.");
+                }
+
+                var leaderboard = new LeaderboardDTO { Entries = users };
+
+                return Result<LeaderboardDTO>.Success(leaderboard);
+            }
+            catch (Exception e)
+            {
+                return Result<LeaderboardDTO>.Failure($"Failed to fetch leaderboard: {e.Message}");
+            }
+        }
     }
 }
