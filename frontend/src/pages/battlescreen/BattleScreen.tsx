@@ -83,6 +83,9 @@ export default function CodingPage() {
         }
     };
 
+    const bossHp = 50;
+    const userHp = 100;
+
     return (
         <div
             style={{
@@ -123,16 +126,26 @@ export default function CodingPage() {
                 }}
                 className="bg-black flex justify-center items-start h-full p-10 overflow-hidden relative"
             >
+                {/* responzivnost je sjebana zbog slike (slika je prevelika) */}
+                <div className="flex flex-row justify-between items-center w-full p-5">
+                    <div className="text-4xl absolute bottom-20 bg-red-500 justify-left items-left">
+                        BOSS HP: {bossHp}
+                    </div>
+                    <div className="text-4xl absolute bottom-0 bg-red-500 justify-right items-right">
+                        USER HP: {userHp}
+                    </div>
+                </div>
+
                 <img
                     src="src/assets/images/final-boss.png"
                     className="scale-150 translate-x-40 drop-shadow-[5px_0px_20px_rgba(0,0,0,1)]"
                 />
-                <div className="absolute bottom-0 bg-red-500 justify-left items-left">
+                {/* <div className="absolute bottom-0 bg-red-500 justify-left items-left">
                     <img
                         className="w-20 h-20 mb-10 ml-5"
                         src="src/assets/images/heart-full.png"
                     />
-                </div>
+                </div> */}
             </div>
 
             {/* Bottom-Left: Problem Description */}
