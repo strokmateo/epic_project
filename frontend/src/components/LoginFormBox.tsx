@@ -8,6 +8,7 @@ import { Button } from "./ui/button";
 import Circle from "@/assets/images/circle.svg";
 import Lock from "@/assets/images/lock.svg";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const loginSchema = z.object({
     emailUsername: z
@@ -23,7 +24,8 @@ const loginSchema = z.object({
 type Login = z.infer<typeof loginSchema>;
 
 export default function LoginFormBox() {
-    const form = useForm<z.infer<typeof loginSchema>>({
+    const navigate = useNavigate();
+    const form = useForm<Login>({
         resolver: zodResolver(loginSchema),
         defaultValues: {
             emailUsername: "",
@@ -37,13 +39,12 @@ export default function LoginFormBox() {
                 "https://localhost:7092/api/auth/login",
                 values
             );
-            console.log("Response:", response); // Log the success response
+            console.log("Response:", response);
+            navigate("/map");
         } catch (error) {
             if (axios.isAxiosError(error) && error.response?.data) {
-                // Handle server errors
                 const errorMessage =
                     error.response.data || "An error occurred";
-
                 form.setError("password", {
                     type: "server",
                     message: errorMessage,
@@ -55,93 +56,106 @@ export default function LoginFormBox() {
     }
 
     return (
-        <Card className="ml-[31%] p-[40px] bg-primary/50 border-none text-primary w-[741px] h-[531px]">
-            <FormProvider {...form}>
-                <form
-                    onSubmit={form.handleSubmit(onSubmit)}
-                    className="flex flex-col w-full h-full justify-between"
-                >
-                    <section className="flex flex-col gap-[20px] relative">
-                        <FormField
-                            control={form.control}
-                            name="emailUsername"
-                            render={({ formState }) => (
-                                <FormItem>
-                                    <img
-                                        src={Circle}
-                                        alt="circle"
-                                        className="absolute top-[39px] left-[25px]"
-                                        draggable="false"
-                                    />
-                                    <FormControl>
-                                        <Input
-                                            {...form.register("emailUsername", {
-                                                required:
-                                                    "Email / Username required",
-                                            })}
-                                            className="h-[99px] rounded-none text-center !text-[36px] font-auth bg-transparent text-white border-gray-400"
-                                            placeholder="USERNAME"
-                                        />
-                                    </FormControl>
-                                    {/* Reserve space for error */}
-                                    <div className="h-[20px] mt-2">
-                                        {formState.errors.emailUsername && (
-                                            <p className="text-red-500 text-sm">
-                                                {
-                                                    formState.errors
-                                                        .emailUsername.message
-                                                }
-                                            </p>
-                                        )}
-                                    </div>
-                                </FormItem>
-                            )}
-                        />
-
-                        <FormField
-                            control={form.control}
-                            name="password"
-                            render={({ formState }) => (
-                                <FormItem>
-                                    <img
-                                        src={Lock}
-                                        alt="lock"
-                                        className="absolute top-[192px] left-[25px]"
-                                        draggable="false"
-                                    />
-                                    <FormControl>
-                                        <Input
-                                            {...form.register("password", {
-                                                required: "Password required",
-                                            })}
-                                            type="password"
-                                            className="h-[99px] rounded-none text-center !text-[36px] font-auth bg-transparent text-white border-gray-400"
-                                            placeholder="PASSWORD"
-                                        />
-                                    </FormControl>
-                                    {/* Reserve space for error */}
-                                    <div className="h-[20px] mt-2">
-                                        {formState.errors.password && (
-                                            <p className="text-red-500 text-sm">
-                                                {
-                                                    formState.errors.password
-                                                        .message
-                                                }
-                                            </p>
-                                        )}
-                                    </div>
-                                </FormItem>
-                            )}
-                        />
-                    </section>
-                    <Button
-                        type="submit"
-                        className="w-full h-[99px] rounded-none text-[48px] font-auth"
+        <div className="flex justify-center items-center min-h-screen bg-black px-4">
+            <Card className="p-6 bg-primary/50 border-none text-primary w-full max-w-[741px] md:w-[500px] lg:w-[741px]">
+                <FormProvider {...form}>
+                    <form
+                        onSubmit={form.handleSubmit(onSubmit)}
+                        className="flex flex-col w-full gap-6"
                     >
-                        LOGIN
-                    </Button>
-                </form>
-            </FormProvider>
-        </Card>
+                        <section className="flex flex-col gap-5 relative">
+                            <FormField
+                                control={form.control}
+                                name="emailUsername"
+                                render={({ formState }) => (
+                                    <FormItem>
+                                        <div className="relative">
+                                            <img
+                                                src={Circle}
+                                                alt="circle"
+                                                className="absolute top-1/2 left-4 transform -translate-y-1/2 w-6 md:w-8"
+                                                draggable="false"
+                                            />
+                                            <FormControl>
+                                                <Input
+                                                    {...form.register(
+                                                        "emailUsername",
+                                                        {
+                                                            required:
+                                                                "Email / Username required",
+                                                        }
+                                                    )}
+                                                    className="h-[60px] md:h-[80px] text-lg md:text-2xl text-center font-auth bg-transparent text-white border-gray-400 w-full"
+                                                    placeholder="USERNAME"
+                                                />
+                                            </FormControl>
+                                        </div>
+                                        <div className="h-[20px] mt-2">
+                                            {formState.errors.emailUsername && (
+                                                <p className="text-red-500 text-sm">
+                                                    {
+                                                        formState.errors
+                                                            .emailUsername
+                                                            .message
+                                                    }
+                                                </p>
+                                            )}
+                                        </div>
+                                    </FormItem>
+                                )}
+                            />
+
+                            <FormField
+                                control={form.control}
+                                name="password"
+                                render={({ formState }) => (
+                                    <FormItem>
+                                        <div className="relative">
+                                            <img
+                                                src={Lock}
+                                                alt="lock"
+                                                className="absolute top-1/2 left-4 transform -translate-y-1/2 w-6 md:w-8"
+                                                draggable="false"
+                                            />
+                                            <FormControl>
+                                                <Input
+                                                    {...form.register(
+                                                        "password",
+                                                        {
+                                                            required:
+                                                                "Password required",
+                                                        }
+                                                    )}
+                                                    type="password"
+                                                    className="h-[60px] md:h-[80px] text-lg md:text-2xl text-center font-auth bg-transparent text-white border-gray-400 w-full"
+                                                    placeholder="PASSWORD"
+                                                />
+                                            </FormControl>
+                                        </div>
+                                        <div className="h-[20px] mt-2">
+                                            {formState.errors.password && (
+                                                <p className="text-red-500 text-sm">
+                                                    {
+                                                        formState.errors
+                                                            .password.message
+                                                    }
+                                                </p>
+                                            )}
+                                        </div>
+                                    </FormItem>
+                                )}
+                            />
+                        </section>
+
+                        <Button
+                            type="submit"
+                            className="w-full h-[60px] md:h-[80px] text-xl md:text-3xl font-auth"
+                        >
+                            LOGIN
+                        </Button>
+                    </form>
+                </FormProvider>
+            </Card>
+        </div>
     );
 }

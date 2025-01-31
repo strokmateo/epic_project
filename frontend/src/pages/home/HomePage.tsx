@@ -14,32 +14,22 @@ const HomePage: React.FC = () => {
 
     useEffect(() => {
         setTimeout(() => {
-            document.body.style.backgroundColor = "black"; // Postavi crnu pozadinu kad se prikaže stranica
+            document.body.style.backgroundColor = "black";
         }, 600);
         return () => {
-            document.body.style.backgroundColor = ""; // Vrati na default kad napusti stranicu
+            document.body.style.backgroundColor = "";
         };
     }, []);
 
     return (
-        <div style={{ backgroundColor: "black" }}>
+        <div className="bg-black w-full h-screen">
             <div
                 onClick={handleClick}
-                className={`transition-opacity duration-500 ${
-                    isFading ? "animate-fade-out" : "animate-fade-in"
+                className={`w-full h-full absolute bg-cover bg-center bg-no-repeat transition-opacity duration-500 ${
+                    isFading ? "opacity-0" : "opacity-100"
                 }`}
                 style={{
-                    position: "absolute",
-                    width: "100%",
-                    height: "100%",
-                    left: "0px",
-                    top: "0px",
-                    backgroundImage:
-                        "url(src/assets/images/main_start_screen.png)",
-                    backgroundSize: "cover",
-                    backgroundPosition: "center",
-                    backgroundRepeat: "no-repeat",
-                    backgroundColor: "black",
+                    backgroundImage: "url(/src/assets/images/main_start_screen.png)",
                 }}
             ></div>
         </div>
