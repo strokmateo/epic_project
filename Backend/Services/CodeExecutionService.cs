@@ -5,15 +5,12 @@ using System.IO;
 using System.Threading.Tasks;
 using Backend.CodeChecking;
 using Backend.Services.Interfaces;
+using Backend.Repositories.Interfaces;
 
-public class CodeExecutionService : ICodeExecutionService
+public class CodeExecutionService(IUserService userService, ICodingProblemRepository codingProblemRepository) : ICodeExecutionService
 {
-    private readonly IUserService _userService;
-
-    public CodeExecutionService(IUserService userService)
-    {
-        _userService = userService;
-    }
+    private readonly IUserService _userService = userService;
+    private readonly ICodingProblemRepository _codingProblemRepository = codingProblemRepository;
 
     public async Task<CodeCheckResult> ExecuteCode(CodeSubmission submission)
     {
@@ -68,10 +65,11 @@ public class CodeExecutionService : ICodeExecutionService
             var isCorrect = output.Trim() == submission.ExpectedOutput.Trim();
 
             // Calculate XP based on passed test cases
+            var currentProblem = await _codingProblemRepository.GetByIdAsync(submission.CodingProblemId);
             int testCasesPassed = isCorrect ? submission.TestCases.Count : CountPassedTestCases(submission);
-            int xpEarned = (testCasesPassed == submission.TestCases.Count) ? 1000 : testCasesPassed * 200;
+            int xpEarned = (int)Math.Round(testCasesPassed * 200 * currentProblem.DifficultyMultiplier);
 
-            if (xpEarned > 0)
+            if (testCasesPassed == submission.TestCases.Count)
             {
                 await _userService.AddXP(submission.UserId, xpEarned);
             }

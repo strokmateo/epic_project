@@ -1,41 +1,49 @@
-﻿using Backend.Models;
-using Backend.Repositories.Interfaces;
-using Backend.Services.Interfaces;
+﻿using Backend.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 
 
 namespace Backend.Controllers
 {
     [ApiController]
-    [Route("api/problems")]
-    public class ProblemController : ControllerBase
+    [Route("api/[controller]")]
+    public class ProblemController(ICodingProblemService problemService) : ControllerBase
     {
-        private readonly IProblemEvaluationService _evaluationService;
-        public ProblemController(IProblemEvaluationService evaluationService)
-        {
-            _evaluationService = evaluationService;
-        }
+        private readonly ICodingProblemService _problemService = problemService;
 
-        [HttpPost("submit/{problemId}")]
-        public async Task<IActionResult> SubmitSolution(int problemId, [FromBody] ProblemSubmission submission)
+        [HttpGet("id")]
+        public async Task<IActionResult> GetCodingProblem(int problemId)
         {
-            if (string.IsNullOrWhiteSpace(submission?.Code))
+            var result = await _problemService.GetCodingProblemByIdAsync(problemId);
+            
+            if(!result.Succeeded)
             {
-                return BadRequest("Code is required");
-            }
-            var result = await _evaluationService.EvaluateProblemSolution(problemId, submission.Code);
-
-            if(result == null)
-            {
-                return NotFound("Problem not found");
+                return NotFound(result.Message);
             }
 
-            return Ok(result);
+            return Ok(result.Data);
         }
-    }
-    public class ProblemSubmission
-    {
-        public string Code { get; set; }
+
+        //    private readonly IProblemEvaluationService _evaluationService;
+        //    public ProblemController(IProblemEvaluationService evaluationService)
+        //    {
+        //        _evaluationService = evaluationService;
+        //    }
+
+        //    [HttpPost("submit/{problemId}")]
+        //    public async Task<IActionResult> SubmitSolution(int problemId, [FromBody] ProblemSubmission submission)
+        //    {
+        //        if (string.IsNullOrWhiteSpace(submission?.Code))
+        //        {
+        //            return BadRequest("Code is required");
+        //        }
+        //        var result = await _evaluationService.EvaluateProblemSolution(problemId, submission.Code);
+
+        //        if(result == null)
+        //        {
+        //            return NotFound("Problem not found");
+        //        }
+
+        //        return Ok(result);
+        //    }
     }
 }

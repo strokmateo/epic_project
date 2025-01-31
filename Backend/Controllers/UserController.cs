@@ -17,14 +17,14 @@ namespace Backend.Controllers
         [Authorize]
         public async Task<IActionResult> GetFullUserByEmail(string email)
         {
-            var user = await _userService.GetUserByEmail(email);
+            var userResult = await _userService.GetUserByEmail(email);
 
-            if(user == null)
+            if (!userResult.Succeeded)
             {
-                return NotFound();
+                return NotFound(userResult.Message);
             }
 
-            return Ok(user.Data);
+            return Ok(userResult.Data);
         }
     }
 }

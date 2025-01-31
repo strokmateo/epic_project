@@ -6,6 +6,6 @@
         public string Title { get; set; }   
         public string Description { get; set; }
         public List<TestCase> TestCases { get; set; }
-
+        public double DifficultyMultiplier { get; set; }
     }
 }

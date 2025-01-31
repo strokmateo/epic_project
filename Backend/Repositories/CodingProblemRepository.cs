@@ -1,59 +1,60 @@
-﻿using Backend.Models;
+﻿using System.Linq.Expressions;
+using Backend.Data;
+using Backend.Models;
 using Backend.Repositories.Interfaces;
-
-
+using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Repositories
 {
-    public class CodingProblemRepository : ICodingProblemRepository
+    public class CodingProblemRepository : Repository<CodingProblem>, ICodingProblemRepository
     {
+        public CodingProblemRepository(AppDbContext context) : base(context)
+        {
+        }
+
+        public Task AddAsync(CodingProblem entity)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task AddRangeAsync(IEnumerable<CodingProblem> entities)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IEnumerable<CodingProblem>> FindAsync(Expression<Func<CodingProblem, bool>> predicate)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IEnumerable<CodingProblem?>> GetAllAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<CodingProblem?> GetByIdAsync(int id)
+        {
+            return await _dbSet.FirstOrDefaultAsync(c => c.Id == id);
+        }
+
+        public Task<CodingProblem?> GetByIdAsync(Guid id)
+        {
+            throw new NotImplementedException();
+        }
+
         public CodingProblem GetProblemById(int problemId)
         {
-            if (problemId == 1)
-            {
-                return new CodingProblem
-                {
-                    Id = 1,
-                    Title = "Dragon's Lair: Square Grid Treasure Hunt",
-                    Description = "In the heart of the Firepeak Mountains lies the lair of an ancient dragon, guardian of a legendary treasure. To claim the hoard, adventurers must first solve the dragon’s riddle:\r\n\r\n\"A grid of magic seals, square and bright,\r\nGuards the path to treasures of light.\r\nSum the seals where row and column align,\r\nAnd the vault shall open—prove your mind!\"\r\n\r\nThe dragon conjures an n x n grid of glowing magical seals. Each seal holds an integer value. Your task is to compute the sum of the seals along the main diagonal (from the top-left to the bottom-right corner). Only then will the dragon’s barrier fall!",
+            throw new NotImplementedException();
+        }
 
+        public Task RemoveAsync(CodingProblem entity)
+        {
+            throw new NotImplementedException();
+        }
 
-                    TestCases = new List<TestCase>
-                    {
-                        new TestCase
-                        {
-                            Input = "2\n1 2\n3 4",
-                            ExpectedOutput = "5",
-                            isHidden = false
-                        },
-                        new TestCase
-                        {
-                            Input = "3\n10 20 30\n40 50 60\n70 80 90",
-                            ExpectedOutput = "150",
-                            isHidden = false
-                        },
-                        new TestCase
-                        {
-                            Input = "2\n5 6\n8 9",
-                            ExpectedOutput = "14",
-                            isHidden = true
-                        },
-                        new TestCase
-                        {
-                            Input = "1\n100",
-                            ExpectedOutput = "100",
-                            isHidden = true
-                        },
-                        new TestCase
-                        {
-                            Input = "4\n1 2 3 4\n5 6 7 8\n9 10 11 12\n13 14 15 16",
-                            ExpectedOutput = "34",
-                            isHidden = true
-                        }
-                    }
-                };
-            }
-            return null;
+        public Task RemoveRangeAsync(IEnumerable<CodingProblem> entities)
+        {
+            throw new NotImplementedException();
         }
     }
 }

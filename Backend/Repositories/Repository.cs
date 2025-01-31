@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore;
 
 public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
 {
-    private readonly AppDbContext _context;
-    private readonly DbSet<TEntity> _dbSet;
+    protected readonly AppDbContext _context;
+    protected readonly DbSet<TEntity> _dbSet;
 
 
     public Repository(AppDbContext context)

@@ -22,7 +22,7 @@ namespace Backend.Services
         }
         public async Task<ProblemSolutionResult> EvaluateProblemSolution(int problemId, string userCode)
         {
-            var problem = _problemRepository.GetProblemById(problemId);
+            var problem = await _problemRepository.GetByIdAsync(problemId);
             if (problem == null)
             {
                 Console.WriteLine("Problem not found");

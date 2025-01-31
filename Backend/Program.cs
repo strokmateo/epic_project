@@ -119,6 +119,7 @@ builder.Services.AddIdentityCore<User>(options =>
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<UserManager<User>>();
 builder.Services.AddScoped<SignInManager<User>>();
+builder.Services.AddScoped<ICodingProblemService, CodingProblemService>();
 
 builder.Services.AddCors(options =>
 {
