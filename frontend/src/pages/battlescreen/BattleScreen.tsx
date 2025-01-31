@@ -126,12 +126,18 @@ export default function CodingPage() {
                 }}
                 className="bg-black flex justify-center items-start h-full p-10 overflow-hidden relative"
             >
+                <button
+                    onClick={() => window.history.back()}
+                    className="absolute top-0 left-0 m-5 p-2 bg-black text-white rounded-md"
+                >
+                    BACK
+                </button>
                 {/* responzivnost je sjebana zbog slike (slika je prevelika) */}
                 <div className="flex flex-row justify-between items-center w-full p-5">
-                    <div className="text-4xl absolute bottom-20 bg-red-500 justify-left items-left">
+                    <div className="text-4xl text-white absolute bottom-20 bg-black justify-left items-left">
                         BOSS HP: {bossHp}
                     </div>
-                    <div className="text-4xl absolute bottom-0 bg-red-500 justify-right items-right">
+                    <div className="text-4xl text-white absolute bottom-5 bg-black justify-right items-right">
                         USER HP: {userHp}
                     </div>
                 </div>
