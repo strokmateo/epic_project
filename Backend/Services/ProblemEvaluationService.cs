@@ -104,7 +104,8 @@ namespace Backend.Services
                     Console.WriteLine($"Coins successfully added. User now has {totalCoins} more coins.");
                 }
             
-
+                result.XpAwarded = totalXp;
+            result.CoinsAwarded = totalCoins;
             return result;
         }
     }

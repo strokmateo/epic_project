@@ -125,5 +125,34 @@ namespace Backend.Services
                 return Result<LeaderboardDTO>.Failure($"Failed to fetch leaderboard: {e.Message}");
             }
         }
+
+        public async Task<Result<UserDto>> GetUserDtoByEmail(string email)
+        {
+            try
+            {
+                var user = await _userManager.FindByEmailAsync(email);
+
+                if (user == null)
+                {
+                    return Result<UserDto>.Failure("User not found by email");
+                }
+
+                var userDto = new UserDto
+                {
+                    Id = user.Id,
+                    Username = user.UserName,
+                    Email = user.Email,
+                                    // Ensure User entity has this property or adjust accordingly
+                    Xp = user.XP,       // Assuming entity property is 'XP'
+                    Coins = user.Coins
+                };
+
+                return Result<UserDto>.Success(userDto);
+            }
+            catch (Exception e)
+            {
+                return Result<UserDto>.Failure(e.Message);
+            }
+        }
     }
 }

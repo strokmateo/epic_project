@@ -14,10 +14,26 @@ namespace Backend.Controllers
 
         // Temp controller method for testing JWT.
         [HttpGet]
-        [Authorize]
+       
         public async Task<IActionResult> GetFullUserByEmail(string email)
         {
             var userResult = await _userService.GetUserByEmail(email);
+
+            if (!userResult.Succeeded)
+            {
+                return NotFound(userResult.Message);
+            }
+
+            return Ok(userResult.Data);
+        }
+        [HttpGet("current")]
+       
+        public async Task<IActionResult> GetCurrentUser(string email)
+        {
+            // Get the current user's email from the JWT token
+            var userEmail = email;
+
+            var userResult = await _userService.GetUserDtoByEmail(userEmail);
 
             if (!userResult.Succeeded)
             {
