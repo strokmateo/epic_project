@@ -51,6 +51,7 @@
 
 using Backend.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 
 namespace Backend.Controllers
@@ -69,7 +70,7 @@ namespace Backend.Controllers
         }
 
         [HttpPost("submit/{problemId}")]
-        public async Task<IActionResult> SubmitSolution(int problemId, [FromBody] ProblemSubmission submission)
+        public async Task<IActionResult> SubmitSolution(int problemId, [FromBody] ProblemSubmission submission, Guid userId)
         {
             if (string.IsNullOrWhiteSpace(submission?.Code))
             {
@@ -77,7 +78,9 @@ namespace Backend.Controllers
             }
 
             Console.WriteLine(submission.Code);
-            var result = await _evaluationService.EvaluateProblemSolution(problemId, submission.Code);
+            
+
+            var result = await _evaluationService.EvaluateProblemSolution(problemId, submission.Code, userId);
 
             if (result == null)
             {

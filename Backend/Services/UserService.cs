@@ -4,6 +4,7 @@ using Backend.Models.Leaderboard;
 using Backend.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Identity.Client;
 using System;
 using System.Threading.Tasks;
 namespace Backend.Services
@@ -69,6 +70,29 @@ namespace Backend.Services
             catch
             {
                 return Result<bool>.Failure("Failed to update user XP");
+            }
+        }
+
+        public async Task<Result<bool>> AddCoins(Guid userId, int coins)
+        {
+            try
+            {
+                var user = await _userManager.Users.FirstOrDefaultAsync(u => u.Id == userId);
+                if (user == null)
+                {
+                    return Result<bool>.Failure("User not found by id");
+                }
+                user.Coins += coins;
+                var result = await _userManager.UpdateAsync(user);
+                if (!result.Succeeded)
+                {
+                    return Result<bool>.Failure("Failed to update user coins");
+                }
+                return Result<bool>.Success(true);
+            }
+            catch
+            {
+                return Result<bool>.Failure("Failed to update user coins");
             }
         }
 

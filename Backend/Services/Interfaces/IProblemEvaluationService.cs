@@ -5,6 +5,6 @@ namespace Backend.Services.Interfaces
 {
     public interface IProblemEvaluationService
     {
-        Task<ProblemSolutionResult> EvaluateProblemSolution(int problemId, string userCode);
+        Task<ProblemSolutionResult> EvaluateProblemSolution(int problemId, string userCode, Guid userId);
     }
 }
