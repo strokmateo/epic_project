@@ -7,22 +7,49 @@ import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import Circle from "@/assets/images/circle.svg";
 import Lock from "@/assets/images/lock.svg";
-import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const registerSchema = z
     .object({
-        email: z.string().email({ message: "Invalid email address." }).min(5).max(64),
-        username: z.string().min(5).max(16),
-        password: z.string()
-            .min(8)
-            .max(32)
-            .regex(/[A-Z]/, "At least one uppercase letter required.")
-            .regex(/[a-z]/, "At least one lowercase letter required.")
-            .regex(/\d/, "At least one digit required."),
-        repeatedPassword: z.string()
+        email: z
+            .string()
+            .min(5, { message: "Email too short." })
+            .max(64, { message: "Email too long." })
+            .email({ message: "Invalid email address." }),
+        username: z
+            .string()
+            .min(5, { message: "Username too short." })
+            .max(16, { message: "Username too long." }),
+        password: z
+            .string()
+            .min(8, { message: "Password too short." })
+            .max(32, { message: "Password too long." })
+            .refine((password) => /[A-Z]/.test(password), {
+                message: "At least one uppercase letter required.",
+            })
+            .refine((password) => /[a-z]/.test(password), {
+                message: "At least one lowercase letter required.",
+            })
+            .refine((password) => /\d/.test(password), {
+                message: "At least one digit required.",
+            }),
+        repeatedPassword: z
+            .string()
+            .min(8, { message: "Password too short." })
+            .max(32, { message: "Password too long." })
+            .refine((password) => /[A-Z]/.test(password), {
+                message: "At least one uppercase letter required.",
+            })
+            .refine((password) => /[a-z]/.test(password), {
+                message: "At least one lowercase letter required.",
+            })
+            .refine((password) => /\d/.test(password), {
+                message: "At least one digit required.",
+            }),
     })
     .superRefine((data, ctx) => {
+        // Check if passwords match
         if (data.password !== data.repeatedPassword) {
             ctx.addIssue({
                 code: "custom",
@@ -32,9 +59,11 @@ const registerSchema = z
         }
     });
 
+type Register = z.infer<typeof registerSchema>;
+
 export default function RegisterFormBox() {
-    const navigate = useNavigate();
-    const form = useForm({
+    const navigate = useNavigate(); 
+    const form = useForm<z.infer<typeof registerSchema>>({
         resolver: zodResolver(registerSchema),
         defaultValues: {
             email: "",
@@ -44,46 +73,188 @@ export default function RegisterFormBox() {
         },
     });
 
-    async function onSubmit(values) {
+    async function onSubmit(values: Register) {
         try {
-            await axios.post("https://localhost:7092/api/auth/register", values);
-            navigate("/map");
+            const response = await axios.post(
+                "https://localhost:7092/api/auth/register",
+                values
+            );
+            console.log("Response:", response); // Log the success response
+
+           navigate("/map"); // Redirect to login page
         } catch (error) {
             if (axios.isAxiosError(error) && error.response?.data) {
-                form.setError("email", { type: "server", message: error.response.data || "An error occurred" });
+                // Handle server errors
+                const errorMessage = error.response.data || "An error occurred";
+
+                form.setError("email", {
+                    type: "server",
+                    message: errorMessage,
+                });
+            } else {
+                console.error("Unexpected error:", error);
             }
         }
     }
 
     return (
-        <div className="flex justify-center items-center min-h-screen bg-black px-4">
-            <Card className="p-6 bg-primary/50 border-none text-primary w-full max-w-[1000px]">
-                <FormProvider {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col w-full gap-6">
-                        {['email', 'username', 'password', 'RepeatedPassword'].map((field, index) => (
-                            <FormField key={field} control={form.control} name={field} render={({ formState }) => (
+        <Card className="ml-[31%] p-[40px] bg-primary/50 border-none text-primary w-[741px] h-[802px]">
+            <FormProvider {...form}>
+                <form
+                    onSubmit={form.handleSubmit(onSubmit)}
+                    className="flex flex-col w-full h-full justify-between"
+                >
+                    <section className="flex flex-col gap-[20px] relative">
+                        <FormField
+                            control={form.control}
+                            name="email"
+                            render={({ formState }) => (
                                 <FormItem>
-                                    <div className="relative">
-                                        <img src={field.includes("password") ? Lock : Circle} alt={field} 
-                                            className="absolute top-1/2 left-4 transform -translate-y-1/2 w-6 md:w-8" 
-                                            draggable="false" />
-                                        <FormControl>
-                                            <Input {...form.register(field, { required: `${field} required` })} 
-                                                type={field.includes("password") ? "password" : "text"} 
-                                                className="h-[60px] md:h-[80px] text-lg md:text-2xl text-center font-auth bg-transparent text-white border-gray-400 w-full"
-                                                placeholder={field.toUpperCase()} />
-                                        </FormControl>
+                                    <img
+                                        src={Circle}
+                                        alt="circle"
+                                        className="absolute top-[39px] left-[25px]"
+                                        draggable="false"
+                                    />
+                                    <FormControl>
+                                        <Input
+                                            {...form.register("email", {
+                                                required: "Email required",
+                                            })}
+                                            className="h-[99px] rounded-none text-center !text-[36px] font-auth bg-transparent text-white border-gray-400"
+                                            placeholder="EMAIL"
+                                        />
+                                    </FormControl>
+                                    {/* Reserve space for error */}
+                                    <div className="h-[20px] mt-2">
+                                        {formState.errors.email && (
+                                            <p className="text-red-500 text-sm">
+                                                {formState.errors.email.message}
+                                            </p>
+                                        )}
                                     </div>
-                                    {formState.errors[field] && (
-                                        <p className="text-red-500 text-sm mt-2">{formState.errors[field].message}</p>
-                                    )}
                                 </FormItem>
-                            )} />
-                        ))}
-                        <Button type="submit" className="w-full h-[60px] md:h-[80px] text-xl md:text-3xl font-auth">REGISTER</Button>
-                    </form>
-                </FormProvider>
-            </Card>
-        </div>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="username"
+                            render={({ formState }) => (
+                                <FormItem>
+                                    <img
+                                        src={Circle}
+                                        alt="circle"
+                                        className="absolute top-[195px] left-[25px]"
+                                        draggable="false"
+                                    />
+                                    <FormControl>
+                                        <Input
+                                            {...form.register("username", {
+                                                required: "Username required",
+                                            })}
+                                            className="h-[99px] rounded-none text-center !text-[36px] font-auth bg-transparent text-white border-gray-400"
+                                            placeholder="USERNAME"
+                                        />
+                                    </FormControl>
+                                    {/* Reserve space for error */}
+                                    <div className="h-[20px] mt-2">
+                                        {formState.errors.username && (
+                                            <p className="text-red-500 text-sm">
+                                                {
+                                                    formState.errors.username
+                                                        .message
+                                                }
+                                            </p>
+                                        )}
+                                    </div>
+                                </FormItem>
+                            )}
+                        />
+
+                        <FormField
+                            control={form.control}
+                            name="password"
+                            render={({ formState }) => (
+                                <FormItem>
+                                    <img
+                                        src={Lock}
+                                        alt="lock"
+                                        className="absolute top-[348px] left-[25px]"
+                                        draggable="false"
+                                    />
+                                    <FormControl>
+                                        <Input
+                                            {...form.register("password", {
+                                                required: "Password required",
+                                            })}
+                                            type="password"
+                                            className="h-[99px] rounded-none text-center !text-[36px] font-auth bg-transparent text-white border-gray-400"
+                                            placeholder="PASSWORD"
+                                        />
+                                    </FormControl>
+                                    {/* Reserve space for error */}
+                                    <div className="h-[20px] mt-2">
+                                        {formState.errors.password && (
+                                            <p className="text-red-500 text-sm">
+                                                {
+                                                    formState.errors.password
+                                                        .message
+                                                }
+                                            </p>
+                                        )}
+                                    </div>
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="repeatedPassword"
+                            render={({ formState }) => (
+                                <FormItem>
+                                    <img
+                                        src={Lock}
+                                        alt="lock"
+                                        className="absolute top-[504px] left-[25px]"
+                                        draggable="false"
+                                    />
+                                    <FormControl>
+                                        <Input
+                                            {...form.register(
+                                                "repeatedPassword",
+                                                {
+                                                    required:
+                                                        "Password required",
+                                                }
+                                            )}
+                                            type="password"
+                                            className="h-[99px] rounded-none text-center !text-[36px] font-auth bg-transparent text-white border-gray-400"
+                                            placeholder="REPEAT PASSWORD"
+                                        />
+                                    </FormControl>
+                                    {/* Reserve space for error */}
+                                    <div className="h-[20px] mt-2">
+                                        {formState.errors.repeatedPassword && (
+                                            <p className="text-red-500 text-sm">
+                                                {
+                                                    formState.errors
+                                                        .repeatedPassword
+                                                        .message
+                                                }
+                                            </p>
+                                        )}
+                                    </div>
+                                </FormItem>
+                            )}
+                        />
+                    </section>
+                    <Button
+                        type="submit"
+                        className="w-full h-[99px] rounded-none text-[48px] font-auth"
+                    >
+                        REGISTER
+                    </Button>
+                </form>
+            </FormProvider>
+        </Card>
     );
 }

@@ -7,76 +7,36 @@ import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import Circle from "@/assets/images/circle.svg";
 import Lock from "@/assets/images/lock.svg";
-import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
-const registerSchema = z
-    .object({
-        email: z
-            .string()
-            .min(5, { message: "Email too short." })
-            .max(64, { message: "Email too long." })
-            .email({ message: "Invalid email address." }),
-        username: z
-            .string()
-            .min(5, { message: "Username too short." })
-            .max(16, { message: "Username too long." }),
-        password: z
-            .string()
-            .min(8, { message: "Password too short." })
-            .max(32, { message: "Password too long." })
-            .refine((password) => /[A-Z]/.test(password), {
-                message: "At least one uppercase letter required.",
-            })
-            .refine((password) => /[a-z]/.test(password), {
-                message: "At least one lowercase letter required.",
-            })
-            .refine((password) => /\d/.test(password), {
-                message: "At least one digit required.",
-            }),
-        repeatedPassword: z
-            .string()
-            .min(8, { message: "Password too short." })
-            .max(32, { message: "Password too long." })
-            .refine((password) => /[A-Z]/.test(password), {
-                message: "At least one uppercase letter required.",
-            })
-            .refine((password) => /[a-z]/.test(password), {
-                message: "At least one lowercase letter required.",
-            })
-            .refine((password) => /\d/.test(password), {
-                message: "At least one digit required.",
-            }),
-    })
-    .superRefine((data, ctx) => {
-        // Check if passwords match
-        if (data.password !== data.repeatedPassword) {
-            ctx.addIssue({
-                code: "custom",
-                message: "Passwords do not match.",
-                path: ["repeatedPassword"],
-            });
-        }
-    });
+const loginSchema = z.object({
+    emailUsername: z
+        .string()
+        .min(5, { message: "Username / Email too short." })
+        .max(64, { message: "Username / Email too long." }),
+    password: z
+        .string()
+        .min(8, { message: "Password too short." })
+        .max(32, { message: "Password too long." }),
+});
 
-type Register = z.infer<typeof registerSchema>;
+type Login = z.infer<typeof loginSchema>;
 
-export default function RegisterFormBox() {
+export default function LoginFormBox() {
     const navigate = useNavigate();
-    const form = useForm<z.infer<typeof registerSchema>>({
-        resolver: zodResolver(registerSchema),
+    const form = useForm<z.infer<typeof loginSchema>>({
+        resolver: zodResolver(loginSchema),
         defaultValues: {
-            email: "",
-            username: "",
+            emailUsername: "",
             password: "",
-            repeatedPassword: "",
         },
     });
 
-    async function onSubmit(values: Register) {
+    async function onSubmit(values: Login) {
         try {
             const response = await axios.post(
-                "https://localhost:7092/api/auth/register",
+                "https://localhost:7092/api/auth/login",
                 values
             );
             console.log("Response:", response); // Log the success response
@@ -84,9 +44,10 @@ export default function RegisterFormBox() {
         } catch (error) {
             if (axios.isAxiosError(error) && error.response?.data) {
                 // Handle server errors
-                const errorMessage = error.response.data || "An error occurred";
+                const errorMessage =
+                    error.response.data || "An error occurred";
 
-                form.setError("email", {
+                form.setError("password", {
                     type: "server",
                     message: errorMessage,
                 });
@@ -97,7 +58,7 @@ export default function RegisterFormBox() {
     }
 
     return (
-        <Card className="ml-[31%] p-[40px] bg-primary/50 border-none text-primary w-[741px] h-[802px]">
+        <Card className="ml-[31%] p-[40px] bg-primary/50 border-none text-primary w-[741px] h-[531px]">
             <FormProvider {...form}>
                 <form
                     onSubmit={form.handleSubmit(onSubmit)}
@@ -106,7 +67,7 @@ export default function RegisterFormBox() {
                     <section className="flex flex-col gap-[20px] relative">
                         <FormField
                             control={form.control}
-                            name="email"
+                            name="emailUsername"
                             render={({ formState }) => (
                                 <FormItem>
                                     <img
@@ -117,39 +78,9 @@ export default function RegisterFormBox() {
                                     />
                                     <FormControl>
                                         <Input
-                                            {...form.register("email", {
-                                                required: "Email required",
-                                            })}
-                                            className="h-[99px] rounded-none text-center !text-[36px] font-auth bg-transparent text-white border-gray-400"
-                                            placeholder="EMAIL"
-                                        />
-                                    </FormControl>
-                                    {/* Reserve space for error */}
-                                    <div className="h-[20px] mt-2">
-                                        {formState.errors.email && (
-                                            <p className="text-red-500 text-sm">
-                                                {formState.errors.email.message}
-                                            </p>
-                                        )}
-                                    </div>
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="username"
-                            render={({ formState }) => (
-                                <FormItem>
-                                    <img
-                                        src={Circle}
-                                        alt="circle"
-                                        className="absolute top-[195px] left-[25px]"
-                                        draggable="false"
-                                    />
-                                    <FormControl>
-                                        <Input
-                                            {...form.register("username", {
-                                                required: "Username required",
+                                            {...form.register("emailUsername", {
+                                                required:
+                                                    "Email / Username required",
                                             })}
                                             className="h-[99px] rounded-none text-center !text-[36px] font-auth bg-transparent text-white border-gray-400"
                                             placeholder="USERNAME"
@@ -157,11 +88,11 @@ export default function RegisterFormBox() {
                                     </FormControl>
                                     {/* Reserve space for error */}
                                     <div className="h-[20px] mt-2">
-                                        {formState.errors.username && (
+                                        {formState.errors.emailUsername && (
                                             <p className="text-red-500 text-sm">
                                                 {
-                                                    formState.errors.username
-                                                        .message
+                                                    formState.errors
+                                                        .emailUsername.message
                                                 }
                                             </p>
                                         )}
@@ -178,7 +109,7 @@ export default function RegisterFormBox() {
                                     <img
                                         src={Lock}
                                         alt="lock"
-                                        className="absolute top-[348px] left-[25px]"
+                                        className="absolute top-[192px] left-[25px]"
                                         draggable="false"
                                     />
                                     <FormControl>
@@ -205,52 +136,12 @@ export default function RegisterFormBox() {
                                 </FormItem>
                             )}
                         />
-                        <FormField
-                            control={form.control}
-                            name="repeatedPassword"
-                            render={({ formState }) => (
-                                <FormItem>
-                                    <img
-                                        src={Lock}
-                                        alt="lock"
-                                        className="absolute top-[504px] left-[25px]"
-                                        draggable="false"
-                                    />
-                                    <FormControl>
-                                        <Input
-                                            {...form.register(
-                                                "repeatedPassword",
-                                                {
-                                                    required:
-                                                        "Password required",
-                                                }
-                                            )}
-                                            type="password"
-                                            className="h-[99px] rounded-none text-center !text-[36px] font-auth bg-transparent text-white border-gray-400"
-                                            placeholder="REPEAT PASSWORD"
-                                        />
-                                    </FormControl>
-                                    {/* Reserve space for error */}
-                                    <div className="h-[20px] mt-2">
-                                        {formState.errors.repeatedPassword && (
-                                            <p className="text-red-500 text-sm">
-                                                {
-                                                    formState.errors
-                                                        .repeatedPassword
-                                                        .message
-                                                }
-                                            </p>
-                                        )}
-                                    </div>
-                                </FormItem>
-                            )}
-                        />
                     </section>
                     <Button
                         type="submit"
                         className="w-full h-[99px] rounded-none text-[48px] font-auth"
                     >
-                        REGISTER
+                        LOGIN
                     </Button>
                 </form>
             </FormProvider>
