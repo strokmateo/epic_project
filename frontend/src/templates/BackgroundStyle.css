@@ -1,0 +1,19 @@
+.background{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+
+/* 
+player health nakon battlea
+damaging system
+xp i coins gain
+info locked behind login
+refaktoriranje koda (tailwind svugdje i dijenjenje sranja u komponente)
+*/

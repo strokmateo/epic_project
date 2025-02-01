@@ -8,7 +8,7 @@ const HomePage: React.FC = () => {
     const handleClick = () => {
         setIsFading(true);
         setTimeout(() => {
-            navigate("/login");
+            navigate("/register");
         }, 1000);
     };
 
@@ -29,7 +29,8 @@ const HomePage: React.FC = () => {
                     isFading ? "opacity-0" : "opacity-100"
                 }`}
                 style={{
-                    backgroundImage: "url(/src/assets/images/main_start_screen.png)",
+                    backgroundImage:
+                        "url(/src/assets/images/main_start_screen.png)",
                 }}
             ></div>
         </div>

@@ -62,7 +62,7 @@ const registerSchema = z
 type Register = z.infer<typeof registerSchema>;
 
 export default function RegisterFormBox() {
-    const navigate = useNavigate(); 
+    const navigate = useNavigate();
     const form = useForm<z.infer<typeof registerSchema>>({
         resolver: zodResolver(registerSchema),
         defaultValues: {
@@ -81,7 +81,7 @@ export default function RegisterFormBox() {
             );
             console.log("Response:", response); // Log the success response
 
-           navigate("/map"); // Redirect to login page
+            navigate("/login"); // Redirect to login page
         } catch (error) {
             if (axios.isAxiosError(error) && error.response?.data) {
                 // Handle server errors

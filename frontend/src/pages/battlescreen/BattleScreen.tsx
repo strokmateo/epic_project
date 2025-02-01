@@ -14,7 +14,8 @@ import {
     AlertDialogHeader,
     AlertDialogFooter,
 } from "../../components/ui/alert-dialog";
-import { useAuth, User } from "../../context/AuthContext";
+import BackButton from "../../templates/BackButton";
+//import { useAuth, User } from "../../context/AuthContext";
 
 interface TestCase {
     id: number;
@@ -195,12 +196,7 @@ export default function CodingPage() {
                 }}
                 className="bg-black flex justify-center items-start h-full p-10 overflow-hidden relative"
             >
-                <button
-                    onClick={() => window.history.back()}
-                    className="absolute top-0 left-0 m-5 p-2 bg-black text-white rounded-md"
-                >
-                    BACK
-                </button>
+                <BackButton />
                 {/* responzivnost je sjebana zbog slike (slika je prevelika) */}
                 <div className="flex flex-row justify-between items-center w-full p-5">
                     <div className="text-4xl text-white absolute bottom-20 bg-black justify-left items-left">
@@ -315,84 +311,90 @@ export default function CodingPage() {
                         gap: "16px",
                     }}
                 >
-                    {testCases.map((tc, index) => (
-                        <div
-                            key={"${tc.id}-${index}"}
-                            style={{
-                                border: "1px solid #444",
-                                borderRadius: "8px",
-                                padding: "16px",
-                                backgroundColor:
-                                    tc.result === undefined
-                                        ? "rgba(50, 50, 50, 0.5)"
-                                        : tc.result
-                                        ? "rgba(46, 125, 50, 0.3)"
-                                        : "rgba(211, 47, 47, 0.3)",
-                                transition: "background-color 0.3s ease",
-                                opacity: tc.isHidden ? 0.8 : 1,
-                            }}
-                        >
+                    {testCases.map(
+                        (
+                            tc,
+                            _index //_index da se makne warning jer pise da je unused
+                        ) => (
                             <div
+                                key={"${tc.id}-${index}"}
                                 style={{
-                                    display: "flex",
-                                    justifyContent: "space-between",
-                                    marginBottom: "12px",
+                                    border: "1px solid #444",
+                                    borderRadius: "8px",
+                                    padding: "16px",
+                                    backgroundColor:
+                                        tc.result === undefined
+                                            ? "rgba(50, 50, 50, 0.5)"
+                                            : tc.result
+                                            ? "rgba(46, 125, 50, 0.3)"
+                                            : "rgba(211, 47, 47, 0.3)",
+                                    transition: "background-color 0.3s ease",
+                                    opacity: tc.isHidden ? 0.8 : 1,
                                 }}
                             >
-                                <strong>
-                                    {tc.isHidden
-                                        ? "Hidden Test Case"
-                                        : `Test Case #${tc.id}`}
-                                </strong>
-                                {tc.result !== undefined && (
-                                    <span
-                                        style={{
-                                            color: tc.result
-                                                ? "#81c784"
-                                                : "#e57373",
-                                            fontWeight: "bold",
-                                        }}
-                                    >
-                                        {tc.result ? "PASSED" : "FAILED"}
-                                    </span>
+                                <div
+                                    style={{
+                                        display: "flex",
+                                        justifyContent: "space-between",
+                                        marginBottom: "12px",
+                                    }}
+                                >
+                                    <strong>
+                                        {tc.isHidden
+                                            ? "Hidden Test Case"
+                                            : `Test Case #${tc.id}`}
+                                    </strong>
+                                    {tc.result !== undefined && (
+                                        <span
+                                            style={{
+                                                color: tc.result
+                                                    ? "#81c784"
+                                                    : "#e57373",
+                                                fontWeight: "bold",
+                                            }}
+                                        >
+                                            {tc.result ? "PASSED" : "FAILED"}
+                                        </span>
+                                    )}
+                                </div>
+                                {!tc.isHidden && (
+                                    <>
+                                        <div style={{ marginBottom: "8px" }}>
+                                            <div
+                                                style={{
+                                                    fontWeight: 500,
+                                                    marginBottom: "4px",
+                                                }}
+                                            >
+                                                Input:
+                                            </div>
+                                            <pre
+                                                style={{
+                                                    backgroundColor:
+                                                        "rgba(0, 0, 0, 0.3)",
+                                                    padding: "8px",
+                                                    borderRadius: "4px",
+                                                    overflowX: "auto",
+                                                }}
+                                            >
+                                                {tc.input}
+                                            </pre>
+                                        </div>
+                                        <div style={{ marginBottom: "8px" }}>
+                                            <strong>Expected:</strong>{" "}
+                                            {tc.expected}
+                                        </div>
+                                    </>
+                                )}
+
+                                {!tc.isHidden && (
+                                    <div>
+                                        <strong>Actual:</strong> {tc.actual}
+                                    </div>
                                 )}
                             </div>
-                            {!tc.isHidden && (
-                                <>
-                                    <div style={{ marginBottom: "8px" }}>
-                                        <div
-                                            style={{
-                                                fontWeight: 500,
-                                                marginBottom: "4px",
-                                            }}
-                                        >
-                                            Input:
-                                        </div>
-                                        <pre
-                                            style={{
-                                                backgroundColor:
-                                                    "rgba(0, 0, 0, 0.3)",
-                                                padding: "8px",
-                                                borderRadius: "4px",
-                                                overflowX: "auto",
-                                            }}
-                                        >
-                                            {tc.input}
-                                        </pre>
-                                    </div>
-                                    <div style={{ marginBottom: "8px" }}>
-                                        <strong>Expected:</strong> {tc.expected}
-                                    </div>
-                                </>
-                            )}
-
-                            {!tc.isHidden && (
-                                <div>
-                                    <strong>Actual:</strong> {tc.actual}
-                                </div>
-                            )}
-                        </div>
-                    ))}
+                        )
+                    )}
                 </div>
             </div>
         </div>
