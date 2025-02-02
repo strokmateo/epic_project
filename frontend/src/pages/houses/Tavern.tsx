@@ -8,10 +8,7 @@ const Tavern: React.FC = () => {
 
     return (
         <div
-            style={{
-                backgroundImage: "url(src/assets/images/tavern_inside_v1.png)",
-            }}
-            className="background w-screen h-screen bg-cover flex flex-col justify-end relative overflow-hidden"
+            className="bg-tavern-background background animate-fade-in w-screen h-screen bg-cover flex flex-col justify-end relative overflow-hidden"
             onClick={() => navigate("/map")}
         >
             <CharacterDialog

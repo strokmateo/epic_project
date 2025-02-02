@@ -127,7 +127,7 @@ export default function CodingPage() {
                 height: "100vh",
                 overflow: "hidden",
             }}
-            className="font-pixel"
+            className="animate-fade-in font-pixel"
         >
             {/* Top-Left: Code Editor */}
             {/* 🏆 WIN DIALOG */}

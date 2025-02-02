@@ -8,11 +8,7 @@ const WizardHut: React.FC = () => {
 
     return (
         <div
-            style={{
-                backgroundImage:
-                    "url(src/assets/images/wizard_shack_pixelated_v1.png)",
-            }}
-            className="w-screen h-screen bg-cover flex flex-col justify-end relative overflow-hidden"
+            className="bg-wizard-hut-background background animate-fade-in w-screen h-screen bg-cover flex flex-col justify-end relative overflow-hidden"
             onClick={() => navigate("/map")}
         >
             <CharacterDialog

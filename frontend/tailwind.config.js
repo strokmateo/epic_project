@@ -53,6 +53,18 @@ export default {
                     "url('src/assets/images/first_town_street_view_pixelated.png')",
                 "auth-background-effects":
                     "url('src/assets/images/first_town_street_view_pixelated_effects.png')",
+                "map-background":
+                    "url('src/assets/images/fighting_town.jpeg')",
+                "alley-background":
+                    "url(src/assets/images/dark_alleyway_pixelized_v1.png)",
+                "town-hall-background":
+                    "url(src/assets/images/town_hall_pixelized_v1.png)",
+                "tavern-background":
+                    "url(src/assets/images/tavern_inside_v1.png)",
+                "wizard-hut-background":
+                    "url(src/assets/images/wizard_shack_pixelated_v1.png)",
+                "leaderboard-background":
+                    "url(src/assets/images/leaderboard-backdrop.png)",
             },
             borderRadius: {
                 lg: "var(--radius)",

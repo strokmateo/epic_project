@@ -8,11 +8,7 @@ const Alley: React.FC = () => {
 
     return (
         <div
-            style={{
-                backgroundImage:
-                    "url(src/assets/images/dark_alleyway_pixelized_v1.png)",
-            }}
-            className=" background w-screen h-screen bg-cover flex flex-col justify-end relative overflow-hidden"
+            className="bg-alley-background background animate-fade-in w-screen h-screen bg-cover flex flex-col justify-end relative overflow-hidden"
             onClick={() => navigate("/map")}
         >
             <CharacterDialog
