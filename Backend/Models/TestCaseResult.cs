@@ -2,6 +2,7 @@
 {
     public class TestCaseResult
     {
+        public int testCaseId { get; set; }
         public string Input { get; set; }
         public string ExpectedOutput { get; set; }
         public string ActualOutput { get; set; }    

@@ -1,4 +1,4 @@
 ﻿namespace Backend.Models.LoginAuthModels
 {
-    public record LoginResponseDto(string Username, string Email, string Token);
+    public record LoginResponseDto(Guid id, string Username, string Email);
 }

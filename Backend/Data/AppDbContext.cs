@@ -44,7 +44,7 @@ namespace Backend.Data
                 {
                     Id = 1,
                     CodingProblemId = 1, // Link to CodingProblem 1
-                    Input = "2\n1 2\n3 4",
+                    InputArguments = "2\n1 2\n3 4",
                     ExpectedOutput = "5",
                     isHidden = false
                 },
@@ -52,7 +52,7 @@ namespace Backend.Data
                 {
                     Id = 2,
                     CodingProblemId = 1,
-                    Input = "3\n10 20 30\n40 50 60\n70 80 90",
+                    InputArguments = "3\n10 20 30\n40 50 60\n70 80 90",
                     ExpectedOutput = "150",
                     isHidden = false
                 },
@@ -60,7 +60,7 @@ namespace Backend.Data
                 {
                     Id = 3,
                     CodingProblemId = 1,
-                    Input = "2\n5 6\n8 9",
+                    InputArguments = "2\n5 6\n8 9",
                     ExpectedOutput = "14",
                     isHidden = true
                 },
@@ -68,7 +68,7 @@ namespace Backend.Data
                 {
                     Id = 4,
                     CodingProblemId = 1,
-                    Input = "1\n100",
+                    InputArguments = "1\n100",
                     ExpectedOutput = "100",
                     isHidden = true
                 },
@@ -76,7 +76,7 @@ namespace Backend.Data
                 {
                     Id = 5,
                     CodingProblemId = 1,
-                    Input = "4\n1 2 3 4\n5 6 7 8\n9 10 11 12\n13 14 15 16",
+                    InputArguments = "4\n1 2 3 4\n5 6 7 8\n9 10 11 12\n13 14 15 16",
                     ExpectedOutput = "34",
                     isHidden = true
                 }

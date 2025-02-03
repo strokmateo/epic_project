@@ -1,11 +1,6 @@
-﻿using Backend.Entities;
-using Backend.Models;
+﻿using Backend.Models;
 using Backend.Repositories.Interfaces;
 using Backend.Services.Interfaces;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
 
 namespace Backend.Services
 {
@@ -13,7 +8,6 @@ namespace Backend.Services
     {
         private readonly ICodingProblemRepository _problemRepository;
         private readonly ICodeExecutionService _executionService;
-        private readonly IUserService _userService;
 
         public ProblemEvaluationService(
             ICodingProblemRepository problemRepository,
@@ -22,91 +16,40 @@ namespace Backend.Services
         {
             _problemRepository = problemRepository;
             _executionService = executionService;
-            _userService = userService;
         }
-        public async Task<ProblemSolutionResult> EvaluateProblemSolution(int problemId, string userCode, Guid userId)
+        public async Task<Result<ProblemSolutionResult>> EvaluateProblemSolution(int problemId, string userCode, Guid userId)
         {
-            var problem = await _problemRepository.GetByIdAsync(problemId);
+            var problem = await _problemRepository.GetProblemByIdAsync(problemId);
             if (problem == null)
             {
-                Console.WriteLine("Problem not found");
-                return null;
+                return Result<ProblemSolutionResult>.Failure("Coding problem not found.");
             }
-            var result = new ProblemSolutionResult
+            var userSolutionResult = new ProblemSolutionResult
             {
                 ProblemId = problemId,
+                DifficultyMultiplier = problem.DifficultyMultiplier,
                 TestCaseResults = new List<TestCaseResult>()
             };
 
-            int passedTestCases = 0;
-            int xpPerTestCase = 100;
-            int coinsPerTestCase = 25;
-            foreach (var testCase in problem.TestCases)
+            foreach (var problemTestCase in problem.TestCases)
             {
-                var submission = new CodeSubmission
-                {
-                    Code = userCode,
-                    Input = testCase.Input,
-                    ExpectedOutput = testCase.ExpectedOutput,
-                    Id = new Guid(),
-                    CodingProblemId = problemId,
-                    TestCases = new List<TestCase> { testCase },
-
-                };
-
-                var checkResult = await _executionService.ExecuteCode(submission);
+                var checkResult = await _executionService.ExecuteCode(userCode, problemTestCase);
 
                 var testResult = new TestCaseResult
                 {
-                    Input = testCase.isHidden ? "*****" : testCase.Input,
-                    ExpectedOutput = testCase.isHidden ? "*****" : testCase.ExpectedOutput,
+                    testCaseId = problemTestCase.Id,
+                    Input = problemTestCase.isHidden ? "*****" : problemTestCase.InputArguments,
+                    ExpectedOutput = problemTestCase.isHidden ? "*****" : problemTestCase.ExpectedOutput,
                     ActualOutput = checkResult.ActualOutput,
                     Passed = checkResult.isCorrect,
-                    IsHidden = testCase.isHidden
+                    IsHidden = problemTestCase.isHidden
 
                 };
-                result.TestCaseResults.Add(testResult);
-                if(checkResult.isCorrect)
-                {
-                    passedTestCases++;
-                }
+                userSolutionResult.TestCaseResults.Add(testResult);
             }
-            result.AllTestsPassed = result.TestCaseResults.All(result => result.Passed);
-            int totalXp = 0;
-            int totalCoins = 0;
-            if (result.AllTestsPassed)
-            {
-                  totalXp = 500;
-                totalCoins = 125;
-            }
-            
-            
-                Console.WriteLine($"Adding {totalXp} XP to user {userId}");
-                var xpResult = await _userService.AddXP(userId, totalXp);
-                if (!xpResult.Succeeded)
-                {
-                    Console.WriteLine($"Failed to add XP: {xpResult.Message}");
-                }
-                else
-                {
-                    Console.WriteLine($"XP successfully added. User now has {totalXp} more XP.");
-                }
-            
-            
-                Console.WriteLine($"Adding {totalCoins} coins to user {userId}");
-                var coinResult = await _userService.AddCoins(userId, totalCoins);
-                if (!coinResult.Succeeded)
-                {
-                    Console.WriteLine($"Failed to add coins: {coinResult.Message}");
-                }
-                else
-                {
-                    Console.WriteLine($"Coins successfully added. User now has {totalCoins} more coins.");
-                }
-            
-                result.XpAwarded = totalXp;
-            result.CoinsAwarded = totalCoins;
-            return result;
+            userSolutionResult.AllTestsPassed = userSolutionResult.TestCaseResults.All(result => result.Passed);
+
+            return Result<ProblemSolutionResult>.Success(userSolutionResult);
         }
     }
 }

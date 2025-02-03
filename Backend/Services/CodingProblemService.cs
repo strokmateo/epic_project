@@ -11,7 +11,7 @@ namespace Backend.Services
         {
             try
             {
-                var problem = await _problemRepository.GetByIdAsync(id);
+                var problem = await _problemRepository.GetProblemByIdAsync(id);
 
                 if(problem == null)
                 {
