@@ -49,8 +49,10 @@
 //}
 
 
+using Backend.Models;
 using Backend.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
 
@@ -62,32 +64,58 @@ namespace Backend.Controllers
     {
         private readonly IProblemEvaluationService _evaluationService;
         private readonly ICodingProblemService _problemService;
-        public ProblemController(IProblemEvaluationService evaluationService, ICodingProblemService problemService)
+        private readonly IRewardService _rewardService;
+        public ProblemController(IProblemEvaluationService evaluationService,
+            ICodingProblemService problemService,
+            IRewardService rewardService)
         {
             _evaluationService = evaluationService;
             _problemService = problemService;
-
+            _rewardService = rewardService;
         }
 
         [HttpPost("submit/{problemId}")]
-        public async Task<IActionResult> SubmitSolution(int problemId, [FromBody] ProblemSubmission submission, Guid userId)
+        public async Task<IActionResult> SubmitSolution(int problemId, [FromBody] ProblemSubmission submission)
         {
-            if (string.IsNullOrWhiteSpace(submission?.Code))
-            {
-                return BadRequest("Code is required");
-            }
+            var evalResult = await _evaluationService.EvaluateProblemSolution(problemId,
+                submission.Code,
+                submission.UserId);
 
-            Console.WriteLine(submission.Code);
-            
-
-            var result = await _evaluationService.EvaluateProblemSolution(problemId, submission.Code, userId);
-
-            if (result == null)
+            if (evalResult == null)
             {
                 return NotFound("Problem not found");
             }
 
-            return Ok(result);
+            if (evalResult?.Data == null)
+            {
+                return NotFound("Problem not found or evaluation failed.");
+            }
+
+            if (evalResult.Data.AllTestsPassed)
+            {
+                var xpResult = await _rewardService.AddXP(submission.UserId,
+                    evalResult.Data.DifficultyMultiplier,
+                    evalResult.Data.TestCaseResults.Count());
+
+                if (!xpResult.Succeeded)
+                {
+                    return BadRequest(new { message = xpResult.Message });
+                }
+
+                var coinResult = await _rewardService.AddCoins(submission.UserId,
+                    evalResult.Data.DifficultyMultiplier,
+                    evalResult.Data.TestCaseResults.Count());
+
+                if (!xpResult.Succeeded)
+                {
+                    return BadRequest(new { message = coinResult.Message });
+                }
+
+                evalResult.Data.XpEarned = xpResult.Data;
+                evalResult.Data.CoinsEarned = coinResult.Data;
+            }
+
+            return Ok(evalResult.Data);
         }
 
         [HttpGet("id")]
@@ -103,9 +131,6 @@ namespace Backend.Controllers
             return Ok(result.Data);
         }
     }
-    public class ProblemSubmission
-    {
-        public string Code { get; set; }
-    }
+    
 }
 

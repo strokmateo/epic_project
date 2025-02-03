@@ -14,12 +14,17 @@ namespace Backend.Controllers
         private readonly IAuthService _authService;
         private readonly IUserService _userService;
         private readonly ITokenProviderService _tokenProviderService;
+        private readonly IConfiguration _configuration;
 
-        public AuthController(IAuthService authService, ITokenProviderService tokenProviderService, IUserService userService)
+        public AuthController(IAuthService authService,
+            ITokenProviderService tokenProviderService,
+            IUserService userService,
+            IConfiguration configuration)
         {
             _authService = authService;
             _userService = userService;
             _tokenProviderService = tokenProviderService;
+            _configuration = configuration;
         }
 
         [HttpPost("login")]
@@ -34,7 +39,15 @@ namespace Backend.Controllers
                 var email = user.Email ?? string.Empty;
                 var token = _tokenProviderService.GenerateToken(user);
 
-                var response = new LoginResponseDto(username, email, token);
+                Response.Cookies.Append("jwt", token, new CookieOptions
+                {
+                    HttpOnly = true,
+                    Secure = false, // change to true to enable https, currently http for local react app
+                    SameSite = SameSiteMode.Strict,
+                    Expires = DateTime.UtcNow.AddMinutes(_configuration.GetValue<int>("Jwt:ExpirationInMinutes"))
+                });
+
+                var response = new LoginResponseDto(user.Id, username, email);
                 return Ok(response);
             }
 
@@ -46,12 +59,12 @@ namespace Backend.Controllers
         {
             var result = await _authService.Register(registerDto);
 
-            if(!result.Succeeded)
+            if (!result.Succeeded)
             {
-                // return Conflict("Username or Email already taken.");
                 return Conflict(result.Message);
             }
 
+            Response.Cookies.Delete("jwt");
             return Ok();
         }
     }

@@ -17,7 +17,7 @@ namespace Backend.Controllers
        
         public async Task<IActionResult> GetFullUserByEmail(string email)
         {
-            var userResult = await _userService.GetUserByEmail(email);
+            var userResult = await _userService.GetUserByEmailAsync(email);
 
             if (!userResult.Succeeded)
             {

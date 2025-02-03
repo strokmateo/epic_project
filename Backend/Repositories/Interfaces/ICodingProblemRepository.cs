@@ -3,7 +3,8 @@
 
 namespace Backend.Repositories.Interfaces
 {
-    public interface ICodingProblemRepository : IRepository<CodingProblem>
+    public interface ICodingProblemRepository
     {
+        Task<CodingProblem?> GetProblemByIdAsync(int id);
     }
 }

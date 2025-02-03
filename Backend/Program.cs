@@ -94,6 +94,8 @@ builder.Services.AddScoped<ICodeExecutionService, CodeExecutionService>();
 builder.Services.AddScoped<ICodingProblemRepository, CodingProblemRepository>();
 builder.Services.AddScoped<IProblemEvaluationService, ProblemEvaluationService>();
 builder.Services.AddScoped<ICodingProblemService, CodingProblemService>();
+builder.Services.AddScoped<IRewardService, RewardService>();
+
 
 // Basic identity framework options.
 builder.Services.AddIdentityCore<User>(options =>
@@ -128,7 +130,8 @@ builder.Services.AddCors(options =>
     {
         builder.WithOrigins("http://localhost:3000")
                .AllowAnyHeader()
-               .AllowAnyMethod();
+               .AllowAnyMethod()
+               .AllowCredentials();
     });
 });
 

@@ -12,7 +12,7 @@ namespace Backend.Services
     public class UserService(UserManager<User> userManager) : IUserService
     {
         private readonly UserManager<User> _userManager = userManager;
-        public async Task<Result<User>> GetUserByEmail(string email)
+        public async Task<Result<User>> GetUserByEmailAsync(string email)
         {
             try
             {
@@ -31,7 +31,7 @@ namespace Backend.Services
             }
         }
 
-        public async Task<Result<User>> GetUserById(Guid id)
+        public async Task<Result<User>> GetUserByIdAsync(Guid id)
         {
             try
             {
@@ -46,53 +46,6 @@ namespace Backend.Services
             catch(Exception e)
             {
                 return Result<User>.Failure(e.Message);
-            }
-        }
-        public async Task<Result<bool>> AddXP(Guid userId, int xp)
-        {
-            try
-            {
-                var user = await _userManager.Users.FirstOrDefaultAsync(u => u.Id == userId);
-                if(user == null)
-                {
-                    return Result<bool>.Failure("User not found by id");
-                }
-
-                user.XP += xp;
-                var result = await _userManager.UpdateAsync(user);
-
-                if (!result.Succeeded)
-                {
-                    return Result<bool>.Failure("Failed to update user XP");
-                }
-                return Result<bool>.Success(true);
-            }
-            catch
-            {
-                return Result<bool>.Failure("Failed to update user XP");
-            }
-        }
-
-        public async Task<Result<bool>> AddCoins(Guid userId, int coins)
-        {
-            try
-            {
-                var user = await _userManager.Users.FirstOrDefaultAsync(u => u.Id == userId);
-                if (user == null)
-                {
-                    return Result<bool>.Failure("User not found by id");
-                }
-                user.Coins += coins;
-                var result = await _userManager.UpdateAsync(user);
-                if (!result.Succeeded)
-                {
-                    return Result<bool>.Failure("Failed to update user coins");
-                }
-                return Result<bool>.Success(true);
-            }
-            catch
-            {
-                return Result<bool>.Failure("Failed to update user coins");
             }
         }
 
@@ -152,6 +105,26 @@ namespace Backend.Services
             catch (Exception e)
             {
                 return Result<UserDto>.Failure(e.Message);
+            }
+        }
+
+        public async Task<Result<bool>> UpdateUserByIdAsync(User user)
+        {
+            try
+            {
+                var result = await _userManager.UpdateAsync(user);
+                
+                if(!result.Succeeded)
+                {
+                    var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+                    return Result<bool>.Failure($"Failed to update User:\n{errors}");
+                }
+                
+                return Result<bool>.Success(true);
+            }
+            catch (Exception e)
+            {
+                return Result<bool>.Failure(e.Message);
             }
         }
     }

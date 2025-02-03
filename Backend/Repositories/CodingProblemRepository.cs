@@ -12,51 +12,11 @@ namespace Backend.Repositories
         {
         }
 
-        public Task AddAsync(CodingProblem entity)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task AddRangeAsync(IEnumerable<CodingProblem> entities)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IEnumerable<CodingProblem>> FindAsync(Expression<Func<CodingProblem, bool>> predicate)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IEnumerable<CodingProblem?>> GetAllAsync()
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<CodingProblem?> GetByIdAsync(int id)
+        public async Task<CodingProblem?> GetProblemByIdAsync(int id)
         {
             return await _dbSet
                 .Include(cp => cp.TestCases)
                 .FirstOrDefaultAsync(c => c.Id == id);
-        }
-
-        public Task<CodingProblem?> GetByIdAsync(Guid id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public CodingProblem GetProblemById(int problemId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task RemoveAsync(CodingProblem entity)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task RemoveRangeAsync(IEnumerable<CodingProblem> entities)
-        {
-            throw new NotImplementedException();
         }
     }
 }
