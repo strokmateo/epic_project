@@ -10,6 +10,7 @@ import WizardHut from "./pages/houses/WizardHut";
 import Leaderboard from "./pages/leaderboard/Leaderboard";
 import BattleScreen from "./pages/battlescreen/BattleScreen";
 import { AuthProvider } from "./context/AuthContext";
+import BattleScreenRW from "./pages/battlescreen/BattleScreenRW";
 
 function App() {
     return (
@@ -26,6 +27,10 @@ function App() {
                     <Route path="/wizard-hut" element={<WizardHut />} />
                     <Route path="/leaderboard" element={<Leaderboard />} />
                     <Route path="/battle-screen" element={<BattleScreen />} />
+                    <Route
+                        path="/battle-screen-rw"
+                        element={<BattleScreenRW />}
+                    />
                 </Routes>
             </Router>
         </AuthProvider>
