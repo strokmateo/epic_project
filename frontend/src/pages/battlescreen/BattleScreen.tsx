@@ -15,38 +15,41 @@ import {
     AlertDialogFooter,
 } from "../../components/ui/alert-dialog";
 import BackButton from "../../templates/BackButton";
+import { useAuth } from "../../context/AuthContext";
 //import { useAuth, User } from "../../context/AuthContext";
 
-interface TestCase {
-    id: number;
+interface TestCaseResult {
+    testCaseId: number;
     input: string;
-    expected: string;
-    result?: boolean;
-    actual?: string;
-    isHidden?: boolean;
+    expectedOutput: string;
+    passed: boolean;
+    actualOutput: string;
+    isHidden: boolean;
 }
 
 interface ProblemData {
     id: number;
     title: string;
     description: string;
-    testCases: TestCase[];
+    testCases: TestCaseResult[];
 }
 
 interface SubmissionResult {
     problemId: number;
     allTestsPassed: boolean;
-    testCaseResults: Array<{
-        testCaseId: number;
-        input: string;
-        expectedOutput: string;
-        actualOutput: string;
-        passed: boolean;
-        isHidden: boolean;
-    }>;
+    difficultyMultiplier: number;
+    testCaseResults: TestCaseResult[];
+    coinsEarned: number;
+    xpEarned: number;
+}
+
+interface Rewards {
+    coinsEarned: number;
+    xpEarned: number;
 }
 
 export default function CodingPage() {
+    const { user } = useAuth();
     const [code, setCode] = useState(
         `var dragonLair = function(n, matrix) {\n    // Your code here\n};`
     );
@@ -56,14 +59,23 @@ export default function CodingPage() {
         description: `In the heart of the Firepeak Mountains lies the lair of an ancient dragon, guardian of a legendary treasure. To claim the hoard, adventurers must first solve the dragon’s riddle:\r\n\r\n\"A grid of magic seals, square and bright,\r\nGuards the path to treasures of light.\r\nSum the seals where row and column align,\r\nAnd the vault shall open—prove your mind!\"\r\n\r\nThe dragon conjures an n x n grid of glowing magical seals. Each seal holds an integer value. Your task is to compute the sum of the seals along the main diagonal (from the top-left to the bottom-right corner). Only then will the dragon’s barrier fall!",`,
         testCases: [],
     });
-    const [testCases, setTestCases] = useState<TestCase[]>([]);
+
+    const [testCases, setTestCases] = useState<TestCaseResult[]>([]);
     const [output, setOutput] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [youWin, setYouWin] = useState(false);
     const [bossHealth, setBossHealth] = useState(50);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [rewards, setRewards] = useState<Rewards>({
+        coinsEarned: 0,
+        xpEarned: 0,
+    });
     // Fetch problem data when component mounts
     axios.defaults.baseURL = "https://localhost:7092";
+
+    useEffect(() => {
+        console.log(user);
+    }, []);
 
     useEffect(() => {
         if (bossHealth === 0) {
@@ -75,23 +87,36 @@ export default function CodingPage() {
     const handleSubmit = async () => {
         setIsSubmitting(true);
         try {
+            if (!user) {
+                throw new Error("User must be defined before fighting.");
+            }
+
             const response = await axios.post<SubmissionResult>(
                 `/api/problems/submit/1`,
-                { code: code }
+                { userId: user.id, code: code },
+                { withCredentials: true }
             );
-            console.log("Submission Response:", response.data);
 
-            const transformedTestCases = response.data.testCaseResults.map(
-                (tc, index) => ({
-                    id: tc.testCaseId ?? index, // Use index if ID is missing
+            const submissionResult: SubmissionResult = response.data;
+            console.log("Submission Response:", submissionResult);
+            console.log("Test cases ?????:", submissionResult.testCaseResults);
+
+            setRewards({
+                coinsEarned: submissionResult.coinsEarned,
+                xpEarned: submissionResult.xpEarned,
+            });
+
+            const transformedTestCases: TestCaseResult[] =
+                submissionResult.testCaseResults.map((tc) => ({
+                    testCaseId: tc.testCaseId, // Use index if ID is missing
                     input: tc.isHidden ? "*****" : tc.input,
-                    expected: tc.isHidden ? "*****" : tc.expectedOutput,
-                    actual: tc.actualOutput.trim(),
-                    result: tc.passed,
+                    expectedOutput: tc.isHidden ? "*****" : tc.expectedOutput,
+                    actualOutput: tc.actualOutput.trim(),
+                    passed: tc.passed,
                     isHidden: tc.isHidden,
-                })
-            );
+                }));
             console.log("Submitting code:", code);
+            console.log(transformedTestCases);
 
             setTestCases(transformedTestCases);
             setOutput(
@@ -100,7 +125,7 @@ export default function CodingPage() {
                     : "Some tests failed"
             );
             setBossHealth(
-                50 - transformedTestCases.filter((tc) => tc.result).length * 10
+                50 - transformedTestCases.filter((tc) => tc.passed).length * 10
             );
         } catch (error) {
             console.error("Submission failed:", error);
@@ -149,11 +174,15 @@ export default function CodingPage() {
                             <AlertDialogDescription>
                                 <div>
                                     Xp earned:{" "}
-                                    <span className="text-blue-400">500</span>
+                                    <span className="text-blue-400">
+                                        {rewards.xpEarned}
+                                    </span>
                                 </div>
                                 <div>
                                     Coins earned:{" "}
-                                    <span className="text-yellow-300">125</span>
+                                    <span className="text-yellow-300">
+                                        {rewards.coinsEarned}
+                                    </span>
                                 </div>
                             </AlertDialogDescription>
                         </AlertDialogHeader>
@@ -317,15 +346,15 @@ export default function CodingPage() {
                             _index //_index da se makne warning jer pise da je unused
                         ) => (
                             <div
-                                key={"${tc.id}-${index}"}
+                                key={`${tc.testCaseId}-${_index}`}
                                 style={{
                                     border: "1px solid #444",
                                     borderRadius: "8px",
                                     padding: "16px",
                                     backgroundColor:
-                                        tc.result === undefined
+                                        tc.passed === undefined
                                             ? "rgba(50, 50, 50, 0.5)"
-                                            : tc.result
+                                            : tc.passed
                                             ? "rgba(46, 125, 50, 0.3)"
                                             : "rgba(211, 47, 47, 0.3)",
                                     transition: "background-color 0.3s ease",
@@ -342,18 +371,18 @@ export default function CodingPage() {
                                     <strong>
                                         {tc.isHidden
                                             ? "Hidden Test Case"
-                                            : `Test Case #${tc.id}`}
+                                            : `Test Case #${tc.testCaseId}`}
                                     </strong>
-                                    {tc.result !== undefined && (
+                                    {tc.passed !== undefined && (
                                         <span
                                             style={{
-                                                color: tc.result
+                                                color: tc.passed
                                                     ? "#81c784"
                                                     : "#e57373",
                                                 fontWeight: "bold",
                                             }}
                                         >
-                                            {tc.result ? "PASSED" : "FAILED"}
+                                            {tc.passed ? "PASSED" : "FAILED"}
                                         </span>
                                     )}
                                 </div>
@@ -382,14 +411,15 @@ export default function CodingPage() {
                                         </div>
                                         <div style={{ marginBottom: "8px" }}>
                                             <strong>Expected:</strong>{" "}
-                                            {tc.expected}
+                                            {tc.expectedOutput}
                                         </div>
                                     </>
                                 )}
 
                                 {!tc.isHidden && (
                                     <div>
-                                        <strong>Actual:</strong> {tc.actual}
+                                        <strong>Actual:</strong>{" "}
+                                        {tc.actualOutput}
                                     </div>
                                 )}
                             </div>

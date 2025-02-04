@@ -1,43 +1,47 @@
 import React, { useEffect } from "react";
-import { useState } from "react";
-import { useAuth, User } from "../../context/AuthContext";
+import { useAuth } from "../../context/AuthContext";
 import axios from "axios";
 
 const UserInfo: React.FC = () => {
-    const { user, login } = useAuth();
+    const { user, setUser } = useAuth();
 
-    const [fullUser, setFullUser] = useState<User | null>(user);
+    const fetchUserByEmail = async (email: string) => {
+        try {
+            const response = await axios.get(
+                "https://localhost:7092/api/user/current",
+                {
+                    params: { email },
+                }
+            );
+
+            console.log(response);
+            return response;
+        } catch (error) {
+            console.error("Error fetching user:\n", error);
+        }
+    };
 
     useEffect(() => {
-        const fetchUserDetails = async () => {
-            if (user?.email) {
-                try {
-                    const response = await axios.get(
-                        `https://localhost:7092/api/user/current?email=${encodeURIComponent(
-                            user.email
-                        )}`
-                    );
-                    setFullUser(response.data); // Update with full user info
-                    console.log(response.data);
-                } catch (error) {
-                    console.error("Failed to fetch user details", error);
-                }
-            }
+        if (!user) throw new Error("User must be defined before entering map.");
+
+        const getUserData = async () => {
+            const userData = await fetchUserByEmail(user.email);
+            setUser(userData?.data);
         };
 
-        fetchUserDetails();
-    }, [user]); // Runs when `user` updates
+        getUserData();
+    }, []);
 
     return (
         <div>
-            {fullUser ? (
+            {user ? (
                 <div className="absolute top-0 left-0 bg-black w-[250px] h-[100px] z-50 opacity-80 rounded-sm mt-2 ml-2 flex flex-col justify-around py-2">
-                    <p className="text-white pl-2">User: {fullUser.username}</p>
-                    <p className="text-white pl-2">Xp: {fullUser.xp}</p>{" "}
-                    <p className="text-white pl-2">Coins: {fullUser.coins}</p>{" "}
+                    <p className="text-white pl-2">User: {user.username}</p>
+                    <p className="text-white pl-2">Xp: {user.xp}</p>{" "}
+                    <p className="text-white pl-2">Coins: {user.coins}</p>{" "}
                 </div>
             ) : (
-                <div className="absolute top-0 left-0 bg-black w-[250px] h-[100px] z-50 opacity-80 rounded-sm mt-2 ml-2 flex flex-col justify-around py-2">
+                <div className="absolute top-0 left-0 bg-bslack w-[250px] h-[100px] z-50 opacity-80 rounded-sm mt-2 ml-2 flex flex-col justify-around py-2">
                     <p className="text-white pl-2">Loading user info...</p>
                 </div>
             )}
