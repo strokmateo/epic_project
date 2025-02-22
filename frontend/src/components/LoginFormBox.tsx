@@ -7,8 +7,10 @@ import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import Circle from "@/assets/images/circle.svg";
 import Lock from "@/assets/images/lock.svg";
+import LoadingCircle from "@/assets/gifs/qubodup-loading2.gif";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { useState } from "react";
 
 const loginSchema = z.object({
     emailUsername: z
@@ -26,6 +28,7 @@ type Login = z.infer<typeof loginSchema>;
 export default function LoginFormBox() {
     const navigate = useNavigate();
     const { login } = useAuth();
+    const [isPosting, setIsPosting] = useState<boolean>(false);
     const form = useForm<z.infer<typeof loginSchema>>({
         resolver: zodResolver(loginSchema),
         defaultValues: {
@@ -36,6 +39,7 @@ export default function LoginFormBox() {
 
     async function onSubmit(values: Login) {
         try {
+            setIsPosting(true);
             await login(values.emailUsername, values.password);
             navigate("/map"); // Redirect after successful login
         } catch (error) {
@@ -43,6 +47,8 @@ export default function LoginFormBox() {
                 type: "server",
                 message: "Invalid email or password.",
             });
+        } finally {
+            setIsPosting(false);
         }
     }
 
@@ -128,9 +134,19 @@ export default function LoginFormBox() {
                     </section>
                     <Button
                         type="submit"
-                        className="w-full h-[99px] rounded-none text-[48px] font-auth"
+                        disabled={isPosting ? true : false}
+                        className="w-full relative h-[99px] rounded-none text-[48px] font-auth"
                     >
-                        LOGIN
+                        <>
+                            <p>LOGIN</p>
+                            {isPosting && (
+                                <img
+                                    src={LoadingCircle}
+                                    alt="Loading circle"
+                                    className="absolute right-5"
+                                />
+                            )}
+                        </>
                     </Button>
                 </form>
             </FormProvider>
